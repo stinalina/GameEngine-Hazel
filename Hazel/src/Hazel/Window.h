@@ -23,7 +23,7 @@ namespace Hazel
 	class HAZEL_API Window
 	{
 	public:
-		using EventCallbackFn = std::_Function_args<void(Event&)>;
+		using EventCallbackFn = std::function<void(Event&)>;
 
 		virtual ~Window() {}
 
