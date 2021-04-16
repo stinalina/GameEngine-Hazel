@@ -8,10 +8,7 @@ public:
 
 	}
 
-	~Sandbox()
-	{
-
-	}
+	~Sandbox(){}
 };
 
 Hazel::Application* Hazel::CreateApplication()
