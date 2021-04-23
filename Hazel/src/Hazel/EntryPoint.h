@@ -1,5 +1,4 @@
 #pragma once
-
 #ifdef HZ_PLATFORM_WINDOWS
 
 // extern tells the compiler that this function exits somewhere. The compiler does not care where; 
