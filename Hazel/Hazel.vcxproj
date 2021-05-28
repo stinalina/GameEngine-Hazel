@@ -530,6 +530,8 @@
     <ClInclude Include="vendor\glm\glm\gtx\optimum_pow.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\orthonormalize.hpp" />
     <ClInclude Include="vendor\glm\glm\gtx\orthonormalize.inl" />
+    <ClInclude Include="vendor\glm\glm\gtx\pca.hpp" />
+    <ClInclude Include="vendor\glm\glm\gtx\pca.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\perpendicular.hpp" />
     <ClInclude Include="vendor\glm\glm\gtx\perpendicular.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\polar_coordinates.hpp" />
