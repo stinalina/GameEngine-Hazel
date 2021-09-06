@@ -1,4 +1,5 @@
 #include <Hazel.h>
+#include <Hazel/Core/EntryPoint.h>
 
 #include "imgui/imgui.h"
 
@@ -6,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Hazel::Layer
 {
@@ -13,6 +15,8 @@ public:
 	ExampleLayer():
 		Layer("Example"), m_CameraController(1280.0f / 720.0f)
 	{
+		m_VertexArray = Hazel::VertexArray::Create();
+
 		// Generate vertices and buffer
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
@@ -36,7 +40,7 @@ public:
 		m_IndexBuffer.reset(Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
 		// Links the vertexBuffer with its layout 
-		m_VertexArray.reset(Hazel::VertexArray::Create());
+		m_VertexArray = Hazel::VertexArray::Create();
 		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
@@ -69,7 +73,7 @@ public:
 		Hazel::Ref<Hazel::IndexBuffer> squareIB;
 		squareIB.reset(Hazel::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		// Links the vertexBuffer with its layout 
-		m_SquareVA.reset(Hazel::VertexArray::Create());
+		m_SquareVA = Hazel::VertexArray::Create();
 		m_SquareVA->AddVertexBuffer(squareVB);
 		m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -159,7 +163,8 @@ class Sandbox : public Hazel::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox(){}
