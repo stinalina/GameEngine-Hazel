@@ -101,7 +101,7 @@ public:
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 			std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
-			std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+			std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 
 			for (int y = 0; y < 20; y++)
 			{
@@ -126,7 +126,7 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
 
@@ -155,7 +155,7 @@ private:
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_LogoTexture;
 
 	Hazel::OrthographicCameraController m_CameraController;
-	glm::vec3 m_SquareColor = { 0.3f, 0.4f, 0.5f };
+	glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 };
 
 class Sandbox : public Hazel::Application

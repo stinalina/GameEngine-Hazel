@@ -26,5 +26,5 @@ private:
 
 
 	Hazel::OrthographicCameraController m_CameraController;
-	glm::vec3 m_SquareColor = { 0.3f, 0.4f, 0.5f };
+	glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 };
