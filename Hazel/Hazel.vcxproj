@@ -140,6 +140,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Hazel\Debug\Instrumentor.h" />
     <ClInclude Include="src\Hazel.h" />
     <ClInclude Include="src\Hazel\Core\Application.h" />
     <ClInclude Include="src\Hazel\Core\Core.h" />
