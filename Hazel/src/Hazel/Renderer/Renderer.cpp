@@ -22,6 +22,8 @@ namespace Hazel
 
 	void Renderer::Init()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		RenderCommand::Init();
 
 		s_Data = new RendererStorage();
@@ -94,6 +96,8 @@ namespace Hazel
 
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->SetFloat4("u_Color", color);
 		s_Data->WhiteTexture->Bind();
 
@@ -112,6 +116,8 @@ namespace Hazel
 
 	void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D> texture)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		s_Data->TextureShader->Bind();
 		texture->Bind();
 
