@@ -1,6 +1,6 @@
 #pragma once
 
-// From HZ3.h
+// From glfw3.h
 #define HZ_MOUSE_BUTTON_1         0
 #define HZ_MOUSE_BUTTON_2         1
 #define HZ_MOUSE_BUTTON_3         2
