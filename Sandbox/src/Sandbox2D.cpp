@@ -75,8 +75,8 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 		//Test Game
 		Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
 			//Hazel::Renderer::DrawQuad({ 0.0f, 0.0f, 0.1f }, { 3.0f, 3.0f }, m_SpriteSheet);
-			Hazel::Renderer::DrawQuad({ 1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, m_TextureStairs);
-			Hazel::Renderer::DrawQuad({ -1.0f, 0.0f, 0.0f }, { 1.0f, 2.0f }, m_TextureTree);
+			Hazel::Renderer::DrawRotatedQuad({ 1.0f, 0.0f}, { 1.0f, 1.0f }, glm::radians(45.0f), m_TextureStairs);
+			Hazel::Renderer::DrawQuad({ -1.0f, 0.0f}, { 1.0f, 2.0f }, m_TextureTree);
 		Hazel::Renderer::EndScene();
 	}
 	
