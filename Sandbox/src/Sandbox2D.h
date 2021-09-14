@@ -32,9 +32,13 @@ private:
 	Hazel::Ref<Hazel::Texture2D> m_SpriteSheet;
 	Hazel::Ref<Hazel::SubTexture2D> m_TextureStairs;
 	Hazel::Ref<Hazel::SubTexture2D> m_TextureTree;
+	Hazel::Ref<Hazel::SubTexture2D> m_TextureGrass;
 
 	glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 
 	ParticleSystem m_ParticleSystem;
 	ParticleProps m_Particle;
+
+	uint32_t m_MapWidth, m_MapHeight;
+	std::unordered_map<char, Hazel::Ref<Hazel::SubTexture2D>> s_TextureMap;
 };
