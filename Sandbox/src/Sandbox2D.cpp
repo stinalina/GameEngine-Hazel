@@ -15,6 +15,9 @@ void Sandbox2D::OnAttach()
 
 	//m_Texture = Hazel::Texture2D::Create("assets/textures/Hazel_Logo.png");
 	m_Texture = Hazel::Texture2D::Create("assets/textures/test.png");
+	m_SpriteSheet = Hazel::Texture2D::Create("assets/game/textures/RPGpack_sheet_2X.png");
+	m_TextureStairs = Hazel::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7, 6 }, { 128, 128 });
+	m_TextureTree = Hazel::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1, 2 });
 
 	// Init ParticleSystem here
 	m_Particle.ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -46,6 +49,7 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 		Hazel::RenderCommand::Clear();
 	}
 	{
+#if 0
 		static float rotation = 0.0f;
 		rotation += ts * 30.0f;
 
@@ -66,6 +70,13 @@ void Sandbox2D::OnUpdate(Hazel::Timestep ts)
 				Hazel::Renderer::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
 			}
 		}
+		Hazel::Renderer::EndScene();
+#endif
+		//Test Game
+		Hazel::Renderer::BeginScene(m_CameraController.GetCamera());
+			//Hazel::Renderer::DrawQuad({ 0.0f, 0.0f, 0.1f }, { 3.0f, 3.0f }, m_SpriteSheet);
+			Hazel::Renderer::DrawQuad({ 1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, m_TextureStairs);
+			Hazel::Renderer::DrawQuad({ -1.0f, 0.0f, 0.0f }, { 1.0f, 2.0f }, m_TextureTree);
 		Hazel::Renderer::EndScene();
 	}
 	

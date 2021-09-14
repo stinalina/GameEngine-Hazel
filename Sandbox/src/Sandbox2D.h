@@ -29,6 +29,10 @@ private:
 	Hazel::Ref<Hazel::VertexArray> m_SquareVA;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture;
+	Hazel::Ref<Hazel::Texture2D> m_SpriteSheet;
+	Hazel::Ref<Hazel::SubTexture2D> m_TextureStairs;
+	Hazel::Ref<Hazel::SubTexture2D> m_TextureTree;
+
 	glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 
 	ParticleSystem m_ParticleSystem;
