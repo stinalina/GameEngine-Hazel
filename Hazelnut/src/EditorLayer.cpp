@@ -43,7 +43,7 @@ namespace Hazel
 		Hazel::Renderer::ResetStats();
 		{
 			HZ_PROFILE_SCOPE("Renderer Prep");
-			m_Framebuffer->Bind(); //Render following Scene into the framebuffer
+			//m_Framebuffer->Bind(); //Render following Scene into the framebuffer
 			Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0 });
 			Hazel::RenderCommand::Clear();
 		}
@@ -70,7 +70,7 @@ namespace Hazel
 				}
 			}
 			Hazel::Renderer::EndScene();
-			m_Framebuffer->Unbind();
+			//m_Framebuffer->Unbind();
 		}
 	}
 
@@ -86,12 +86,12 @@ namespace Hazel
 		{
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-
+			
 			m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 		}
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 0, 1 }); //last two parameters to flip the image
+		//ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 0, 1 }); //last two parameters to flip the image
 		ImGui::End();
 		ImGui::PopStyleVar();
 

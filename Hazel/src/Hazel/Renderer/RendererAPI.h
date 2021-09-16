@@ -14,6 +14,8 @@ namespace Hazel
 			None = 0, OpenGL = 1
 		};
 
+		virtual ~RendererAPI() = default;
+
 		virtual void Init() = 0;
 
 		virtual void Clear() = 0;
