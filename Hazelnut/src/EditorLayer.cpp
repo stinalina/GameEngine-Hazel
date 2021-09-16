@@ -37,13 +37,14 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		//Update
-		m_CameraController.OnUpdate(ts);
+		if(m_ViewportFocused)
+			m_CameraController.OnUpdate(ts);
 
 		//Render
 		Hazel::Renderer::ResetStats();
 		{
 			HZ_PROFILE_SCOPE("Renderer Prep");
-			//m_Framebuffer->Bind(); //Render following Scene into the framebuffer
+			m_Framebuffer->Bind(); //Render following Scene into the framebuffer
 			Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0 });
 			Hazel::RenderCommand::Clear();
 		}
@@ -70,7 +71,7 @@ namespace Hazel
 				}
 			}
 			Hazel::Renderer::EndScene();
-			//m_Framebuffer->Unbind();
+			m_Framebuffer->Unbind();
 		}
 	}
 
@@ -79,25 +80,9 @@ namespace Hazel
 	{
 		HZ_PROFILE_FUNCTION();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::Begin("Viewport");
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != (*(glm::vec2*)&viewportPanelSize))
-		{
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
-			
-			m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-		}
-
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-		//ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 0, 1 }); //last two parameters to flip the image
-		ImGui::End();
-		ImGui::PopStyleVar();
-
 		//ImGui::ShowDemoWindow(); //use this to get to this whole example code!
 
-#if 0	static bool dockspaceOpen = true;
+		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -174,6 +159,7 @@ namespace Hazel
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
+			m_ViewportFocused = ImGui::IsWindowFocused();
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			if (m_ViewportSize != (*(glm::vec2*)&viewportPanelSize))
 			{
@@ -182,14 +168,14 @@ namespace Hazel
 
 				m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 			}
-			
+
 			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 0, 1 }); //last two parameters to flip the image
-		ImGui::End();
+			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //last two parameters to flip the image
+			ImGui::End();
 		ImGui::PopStyleVar();
 
 		ImGui::End(); // End of Dockspace
-#endif	
+
 	}
 
 	void EditorLayer::OnEvent(Hazel::Event& e)

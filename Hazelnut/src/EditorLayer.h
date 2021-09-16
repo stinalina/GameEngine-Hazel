@@ -21,6 +21,7 @@ namespace Hazel
 
 	private:
 		Hazel::OrthographicCameraController m_CameraController;
+		bool m_ViewportFocused = false;
 
 		Ref<Shader> m_Shader;
 		Ref<VertexArray> m_VertexArray;
@@ -32,7 +33,7 @@ namespace Hazel
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Hazel::Texture2D> m_Texture;
 
-		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportSize;
 		glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 	};
 }
