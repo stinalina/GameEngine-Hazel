@@ -22,6 +22,7 @@ namespace Hazel
 	private:
 		Hazel::OrthographicCameraController m_CameraController;
 		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 
 		Ref<Shader> m_Shader;
 		Ref<VertexArray> m_VertexArray;
