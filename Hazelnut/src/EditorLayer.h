@@ -34,7 +34,9 @@ namespace Hazel
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Hazel::Texture2D> m_Texture;
 
+		Ref<Scene> m_ActiveScene;
+		entt::entity m_SquareEntity;
+
 		glm::vec2 m_ViewportSize;
-		glm::vec4 m_SquareColor = { 0.3f, 0.4f, 0.5f, 1.0f };
 	};
 }
