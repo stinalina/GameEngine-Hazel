@@ -35,7 +35,7 @@ namespace Hazel
 		Ref<Hazel::Texture2D> m_Texture;
 
 		Ref<Scene> m_ActiveScene;
-		entt::entity m_SquareEntity;
+		Entity m_SquareEntity;
 
 		glm::vec2 m_ViewportSize;
 	};
