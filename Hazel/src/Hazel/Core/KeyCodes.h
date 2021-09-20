@@ -5,7 +5,7 @@ namespace Hazel
 {
 	using KeyCode = uint16_t;
 
-	namespace Key
+	namespace Key //TODO remove enum; rename namespace Key to KeyCode
 	{
 		enum : KeyCode
 		{

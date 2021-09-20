@@ -30,11 +30,63 @@ namespace Hazel
 
 	void Scene::OnUpdate(Timestep ts)
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		//Update Scripts
+		m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 		{
-			auto& [transorm, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer::DrawQuad(transorm, sprite.Color);
+			if (!nsc.Instance)
+			{
+				nsc.InstantiateFunction();
+				nsc.Instance->m_Entity = Entity{ entity, this };
+				nsc.OnCreateFunction(nsc.Instance);
+			}
+
+			nsc.OnUpdateFunction(nsc.Instance, ts);
+		});
+
+		Camera* mainCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
+
+		//find main camera
+		auto view = m_Registry.view<TransformComponent, CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+			if (camera.Primary)
+			{
+				mainCamera = &camera.Camera;
+				cameraTransform = &transform.Transform;
+				break;
+			}
+		}
+
+		//if we found the mainCamera -> Render stuff
+		if(mainCamera) 
+		{
+			Renderer::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer::DrawQuad(transform, sprite.Color);
+			}
+			Renderer::EndScene();
+		}
+	}
+
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		m_ViewportWidth = width;
+		m_ViewportHeight = height;
+
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.FixedAspectRatio) //Resize!
+			{
+				cameraComponent.Camera.SetViewportSize(width, height); 
+			}
 		}
 	}
 }

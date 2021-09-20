@@ -6,6 +6,7 @@
 
 #include "Texture.h"
 #include "SubTexture2D.h"
+#include "Camera.h"
 
 namespace Hazel
 {
@@ -17,7 +18,8 @@ namespace Hazel
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
-		static void BeginScene(const OrthographicCamera& camera);
+		static void BeginScene(const Camera& camera, const glm::mat4& transform); //TODO improove camera and remove transform as a param
+		static void BeginScene(const OrthographicCamera& camera); //TODO Remove
 		static void EndScene();
 		static void Flush();
 

@@ -27,10 +27,39 @@ namespace Hazel
 		m_Framebuffer = Hazel::Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
+
 		//Entity 
-		auto square = m_ActiveScene->CreateEntity("Square");
+		auto square = m_ActiveScene->CreateEntity("Grenn Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 		m_SquareEntity = square;
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>();
+		m_CameraEntity.GetComponent<CameraComponent>().Primary = true;
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnCreate() {}
+			void OnDestroy(){}
+
+			void OnUpdate(Timestep ts)
+			{
+				auto& transform = GetComponent<TransformComponent>().Transform;
+				float speed = 5.0f;
+
+				if (Input::IsKeyPressed(Key::A))
+					transform[3][0] -= speed * ts;
+				if (Input::IsKeyPressed(Key::D))
+					transform[3][0] += speed * ts;
+				if (Input::IsKeyPressed(Key::W))
+					transform[3][1] += speed * ts;
+				if (Input::IsKeyPressed(Key::S))
+					transform[3][1] -= speed * ts;
+			}
+		};
+
+		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 	void EditorLayer::OnDetech()
@@ -40,22 +69,31 @@ namespace Hazel
 
 	void EditorLayer::OnUpdate(Hazel::Timestep ts)
 	{
+		//Resize
+		FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+		if(m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && //zero sized framebuffer is invalid
+			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+		
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+
 		//Update
 		if(m_ViewportFocused)
 			m_CameraController.OnUpdate(ts);
 
 		//Render
 		Renderer::ResetStats();
+		
 		m_Framebuffer->Bind(); //Render following Scene into the framebuffer
+		
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0 });
 		RenderCommand::Clear();
 
-		Renderer::BeginScene(m_CameraController.GetCamera());
-
-		//Update Scene
 		m_ActiveScene->OnUpdate(ts);
 
-		Renderer::EndScene();
 		m_Framebuffer->Unbind();
 		
 	}
@@ -140,11 +178,17 @@ namespace Hazel
 			ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 			ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-			ImGui::Separator();
-			ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag);
-			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-			ImGui::Separator();
+			if (m_SquareEntity) //if this is set to something
+			{
+				ImGui::Separator();
+				ImGui::Text("%s", m_SquareEntity.GetComponent<TagComponent>().Tag.c_str());
+				auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().Color;
+				ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+				ImGui::Separator();
+			}
+
+			ImGui::DragFloat3("Square Transform", glm::value_ptr(m_SquareEntity.GetComponent<TransformComponent>().Transform[3]));
+			ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
