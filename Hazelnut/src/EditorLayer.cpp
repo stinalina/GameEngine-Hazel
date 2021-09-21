@@ -39,10 +39,10 @@ namespace Hazel
 		class CameraController : public ScriptableEntity
 		{
 		public:
-			void OnCreate() {}
-			void OnDestroy(){}
+			virtual void OnCreate() override {}
+			virtual void OnDestroy() override {}
 
-			void OnUpdate(Timestep ts)
+			virtual void OnUpdate(Timestep ts) override
 			{
 				auto& transform = GetComponent<TransformComponent>().Transform;
 				float speed = 5.0f;
