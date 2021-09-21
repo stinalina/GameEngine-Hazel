@@ -6,8 +6,6 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 #include "Hazel/Renderer/Texture.h"
 
-#include <iostream>
-
 namespace Hazel
 {
 	EditorLayer::EditorLayer()
@@ -32,10 +30,11 @@ namespace Hazel
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 		m_SquareEntity = square;
 
-		//the scene camera isn't working
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
 		m_CameraEntity.AddComponent<CameraComponent>();
 		m_CameraEntity.GetComponent<CameraComponent>().Primary = true;
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		class CameraController : public ScriptableEntity
 		{
@@ -168,6 +167,8 @@ namespace Hazel
 
 			ImGui::EndMenuBar();
 		}
+
+		m_SceneHierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Settings");
 			auto stats = Hazel::Renderer::GetStats();

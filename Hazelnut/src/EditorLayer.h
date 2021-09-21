@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hazel.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 //#include "ParticleSystem.h"
 
@@ -31,5 +32,8 @@ namespace Hazel
 		Entity m_CameraEntity;
 
 		glm::vec2 m_ViewportSize;
+
+		//Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 }

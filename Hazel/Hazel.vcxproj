@@ -172,7 +172,7 @@
     <ClInclude Include="src\Hazel\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Hazel\Renderer\Texture.h" />
     <ClInclude Include="src\Hazel\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Hazel\Scene\Component.h" />
+    <ClInclude Include="src\Hazel\Scene\Components.h" />
     <ClInclude Include="src\Hazel\Scene\Scene.h" />
     <ClInclude Include="src\Hazel\Scene\SceneCamera.h" />
     <ClInclude Include="src\Hazel\Scene\ScriptableEntity.h" />

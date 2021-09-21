@@ -1,7 +1,7 @@
 #include "hzpch.h"
 #include "Scene.h"
 
-#include "Component.h"
+#include "Components.h"
 #include "Hazel/Renderer/Renderer.h"
 
 #include "glm/glm.hpp"
