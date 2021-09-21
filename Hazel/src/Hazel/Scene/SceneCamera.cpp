@@ -10,7 +10,7 @@ namespace Hazel
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
+	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip) 
 	{
 		m_OrthographicSize = size;
 		m_OrthographicNear = nearClip;

@@ -47,30 +47,32 @@ namespace Hazel
 		glm::mat4* cameraTransform = nullptr;
 
 		//find main camera
-		auto view = m_Registry.view<TransformComponent, CameraComponent>();
-		for (auto entity : view)
 		{
-			auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-
-			if (camera.Primary)
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
 			{
-				mainCamera = &camera.Camera;
-				cameraTransform = &transform.Transform;
-				break;
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+		
+				if (camera.Primary)
+				{
+					mainCamera = &camera.Camera;
+					cameraTransform = &transform.Transform;
+					break;
+				}
 			}
-		}
-
-		//if we found the mainCamera -> Render stuff
-		if(mainCamera) 
-		{
-			Renderer::BeginScene(mainCamera->GetProjection(), *cameraTransform);
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
+		
+			//if we found the mainCamera -> Render stuff
+			if (mainCamera)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer::DrawQuad(transform, sprite.Color);
+				Renderer::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer::DrawQuad(transform, sprite.Color);
+				}
+				Renderer::EndScene();
 			}
-			Renderer::EndScene();
 		}
 	}
 
@@ -83,7 +85,7 @@ namespace Hazel
 		for (auto entity : view)
 		{
 			auto& cameraComponent = view.get<CameraComponent>(entity);
-			if (!cameraComponent.FixedAspectRatio) //Resize!
+			if (!cameraComponent.FixedAspectRatio) //Resize! 
 				cameraComponent.Camera.SetViewportSize(width, height); 
 		}
 	}

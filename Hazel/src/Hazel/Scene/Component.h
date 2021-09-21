@@ -40,12 +40,13 @@ namespace Hazel
 			: Color(color) {}
 	};
 
+	//the scene camera doesn't work!
 	struct CameraComponent
 	{
 		SceneCamera Camera;
 		bool Primary = false;
 		bool FixedAspectRatio = false;
-
+	
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 	};
