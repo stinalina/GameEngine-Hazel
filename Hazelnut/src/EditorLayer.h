@@ -24,15 +24,7 @@ namespace Hazel
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 
-		Ref<Shader> m_Shader;
-		Ref<VertexArray> m_VertexArray;
-		Ref<VertexBuffer> m_VertexBuffer;
-		Ref<IndexBuffer> m_IndexBuffer;
-		   
-		Ref<Shader> m_FlatColorShader;
-		Ref<VertexArray> m_SquareVA;
 		Ref<Framebuffer> m_Framebuffer;
-		Ref<Hazel::Texture2D> m_Texture;
 
 		Ref<Scene> m_ActiveScene;
 		Entity m_SquareEntity;

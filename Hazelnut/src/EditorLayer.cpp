@@ -16,24 +16,22 @@ namespace Hazel
 	void EditorLayer::OnAttach()
 	{
 		HZ_PROFILE_FUNCTION();
-
-		m_Texture = Hazel::Texture2D::Create("assets/textures/test.png");
-
 		m_CameraController.SetZoomLevel(5.0f);
 
-		Hazel::FramebufferSpecification fbSpec;
+		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
-		m_Framebuffer = Hazel::Framebuffer::Create(fbSpec);
+		m_Framebuffer = Framebuffer::Create(fbSpec);
 
 		m_ActiveScene = CreateRef<Scene>();
 
 		//Entity 
-		auto square = m_ActiveScene->CreateEntity("Grenn Square");
+		auto square = m_ActiveScene->CreateEntity("Green Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 		m_SquareEntity = square;
 
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		//m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
 		m_CameraEntity.AddComponent<CameraComponent>();
 		m_CameraEntity.GetComponent<CameraComponent>().Primary = true;
 
@@ -70,13 +68,13 @@ namespace Hazel
 	void EditorLayer::OnUpdate(Hazel::Timestep ts)
 	{
 		//Resize
-		FramebufferSpecification spec = m_Framebuffer->GetSpecification();
-		if(m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && //zero sized framebuffer is invalid
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
 			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
 		{
 			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-		
+
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
@@ -97,7 +95,6 @@ namespace Hazel
 		m_Framebuffer->Unbind();
 		
 	}
-
 
 	void EditorLayer::OnImGuiRender()
 	{
@@ -207,6 +204,7 @@ namespace Hazel
 				m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
 			}
 
+			//Get the image from the framebuffer
 			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //last two parameters to flip the image
 			ImGui::End();
