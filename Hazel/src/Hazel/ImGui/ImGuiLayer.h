@@ -11,6 +11,8 @@ namespace Hazel
 	class HAZEL_API ImGuiLayer : public Layer
 	{
 	public:
+		enum class ColorTheme {Dark, Hazel};
+
 		ImGuiLayer();
 		~ImGuiLayer();
 
@@ -23,12 +25,16 @@ namespace Hazel
 
 		void BlockEvents(bool block) { m_BlockEvents = block; }
 
-		void SetDarkThemeColors();
-		//TODO:: Set Hazelnut Theme in brown colors!
+		void SetColorTheme(ColorTheme theme);
 
 	private:
 		bool m_BlockEvents = true;
 		float m_Time = 0.0f;
+
+		ColorTheme m_ColorTheme = ColorTheme::Dark;
+
+		void SetDarkColorTheme();
+		void SetHazelColorTheme();
 	};
 }
 

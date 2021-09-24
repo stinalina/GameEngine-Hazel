@@ -9,6 +9,11 @@ workspace "Hazel"
 		"Dist"
 	}
 
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
@@ -18,12 +23,14 @@ IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
 IncludeDir["entt"] = "Hazel/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Hazel/vendor/yaml-cpp/include"
 
 --inlcude the premake5.lua file from other tools into this one--
 group "Dependencies"
 	include "Hazel/vendor/GLFW"
 	include "Hazel/vendor/Glad"
 	include "Hazel/vendor/imgui"
+	include "Hazel/vendor/yaml-cpp"
 group ""
 
 
@@ -52,7 +59,8 @@ project "Hazel"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
@@ -64,13 +72,15 @@ project "Hazel"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links{
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 

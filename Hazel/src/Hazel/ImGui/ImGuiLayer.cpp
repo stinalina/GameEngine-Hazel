@@ -38,7 +38,7 @@ namespace Hazel
         io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f); //make this in if darkTheme...
         //io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Balsamiq/BalsamiqSans-Regular.ttf", 18.0f);
 
-        SetDarkThemeColors();
+        SetColorTheme(ColorTheme::Dark);
 
         ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -104,7 +104,20 @@ namespace Hazel
         }
     }
 
-    void ImGuiLayer::SetDarkThemeColors()
+    void ImGuiLayer::SetColorTheme(ColorTheme theme)
+    {
+        switch (theme)
+        {
+        case ColorTheme::Dark: SetDarkColorTheme();
+            break;
+        case ColorTheme::Hazel: SetHazelColorTheme();
+            break;
+        default: HZ_CORE_INFO("Color theme doesn't supported!");
+            break;
+        }
+    }
+
+    void ImGuiLayer::SetDarkColorTheme()
     {
         auto& colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
@@ -135,5 +148,45 @@ namespace Hazel
         colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
         colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
         colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+    }
+
+    void ImGuiLayer::SetHazelColorTheme()
+    {
+        ImGui::StyleColorsLight();
+
+        auto& colors = ImGui::GetStyle().Colors;
+        colors[ImGuiCol_WindowBg] = ImVec4{ 0.211f, 0.141f, 0.09f, 1.0f };
+        colors[ImGuiCol_Text] = ImVec4{ 0.894f, 0.803f, 0.705f, 1.0f };
+        
+        // Headers
+        colors[ImGuiCol_Header] = ImVec4{ 0.839f, 0.705f, 0.560f, 1.0f };
+        colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.839f, 0.705f, 0.560f, 1.0f };
+        colors[ImGuiCol_HeaderActive] = ImVec4{ 0.839f, 0.705f, 0.560f, 1.0f };
+        
+        // Buttons
+        colors[ImGuiCol_Button] = ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f };
+        colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f };
+        colors[ImGuiCol_ButtonActive] = ImVec4{ 0.0f, 1.0f, 0.0f, 1.0f };
+        
+        // Frame BG
+        colors[ImGuiCol_FrameBg] = ImVec4{ 0.211f, 0.141f, 0.09f, 1.0f };
+        colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.278f, 0.188f, 0.121f, 1.0f };
+        colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.278f, 0.188f, 0.121f, 1.0f };
+        
+        // Tabs
+        colors[ImGuiCol_Tab] = ImVec4{ 0.847f, 0.73f, 0.65f, 1.0f };
+        colors[ImGuiCol_TabHovered] = ImVec4{ 0.847f, 0.73f, 0.65f, 1.0f };
+        colors[ImGuiCol_TabActive] = ImVec4{ 0.847f, 0.73f, 0.65f, 1.0f };
+        colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.847f, 0.73f, 0.65f, 1.0f };
+        colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.847f, 0.73f, 0.65f, 1.0f };
+        
+        // Title
+        colors[ImGuiCol_TitleBg] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+        colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+        colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+
+        colors[ImGuiCol_Border] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+        colors[ImGuiCol_Separator] = ImVec4{ 0.1f, 0.1f, 0.1f, 1.0f };
+        
     }
 }
