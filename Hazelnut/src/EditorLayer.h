@@ -21,6 +21,12 @@ namespace Hazel
 		void OnEvent(Hazel::Event& e) override;
 
 	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
+
 		Hazel::OrthographicCameraController m_CameraController;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;

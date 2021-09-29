@@ -1,7 +1,13 @@
+# Binaries
+**/bin/
+!vendor/bin/premake
+bin-int/
 
 # Visual Studio files and folder
 .vs/
-bin/
-bin-int/
 *.user
 *-json
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user 

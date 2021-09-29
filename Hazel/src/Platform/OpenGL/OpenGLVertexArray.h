@@ -21,6 +21,8 @@ namespace Hazel
 
 	private:
 		uint32_t m_RendererID;
+		uint32_t m_VertexBufferIndex = 0;
+
 		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 	};
