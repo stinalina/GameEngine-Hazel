@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "SubTexture2D.h"
 #include "Camera.h"
+#include "Hazel/Renderer/EditorCamera.h"
 
 namespace Hazel
 {
@@ -19,7 +20,7 @@ namespace Hazel
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(const Camera& camera, const glm::mat4& transform); //TODO improove camera and remove transform as a param
-		static void BeginScene(const OrthographicCamera& camera); //TODO Remove
+		static void BeginScene(const EditorCamera& camera); 
 		static void EndScene();
 		static void Flush();
 
@@ -67,6 +68,7 @@ namespace Hazel
 		static SceneData* s_SceneData;
 
 		static void FlushAndReset();
+		static void StartBatch();
 	};
 
 	

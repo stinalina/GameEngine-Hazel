@@ -119,18 +119,6 @@ namespace Hazel
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const OrthographicCamera& camera)
-	{
-		HZ_PROFILE_FUNCTION();
-
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
-		s_Data.TextureSlotIndex = 1; // Slot 0 have to be white!
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-	}
-
 	void Renderer::BeginScene(const Camera& camera, const glm::mat4& transform)
 	{
 		HZ_PROFILE_FUNCTION();
@@ -140,11 +128,21 @@ namespace Hazel
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
-		s_Data.TextureSlotIndex = 1; // Slot 0 have to be white!
-
-		s_Data.QuadIndexCount = 0;
-		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+		StartBatch();
 	}
+
+	void Renderer::BeginScene(const EditorCamera& camera)
+	{
+		HZ_PROFILE_FUNCTION();
+
+		glm::mat4 viewProj = camera.GetViewProjection();
+
+		s_Data.TextureShader->Bind();
+		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		StartBatch();
+	}
+
 
 	void Renderer::EndScene()
 	{
@@ -171,7 +169,11 @@ namespace Hazel
 	void Renderer::FlushAndReset()
 	{
 		EndScene();
+		StartBatch();
+	}
 
+	void Renderer::StartBatch()
+	{
 		s_Data.TextureSlotIndex = 1; // Slot 0 have to be white!
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

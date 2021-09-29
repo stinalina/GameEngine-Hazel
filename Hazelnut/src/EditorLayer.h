@@ -3,6 +3,8 @@
 #include "Hazel.h"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "Hazel/Renderer/EditorCamera.h"
+
 //#include "ParticleSystem.h"
 
 namespace Hazel
@@ -37,6 +39,8 @@ namespace Hazel
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCamera;
+
+		EditorCamera m_EditorCamera;
 
 		glm::vec2 m_ViewportSize;
 
