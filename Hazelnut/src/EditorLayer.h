@@ -40,6 +40,8 @@ namespace Hazel
 
 		glm::vec2 m_ViewportSize;
 
+		int m_GizmoType = -1;
+
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
