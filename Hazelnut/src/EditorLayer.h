@@ -30,8 +30,11 @@ namespace Hazel
 		void SaveSceneAs();
 
 		Hazel::OrthographicCameraController m_CameraController;
-		bool m_ViewportFocused = false;
-		bool m_ViewportHovered = false;
+
+		bool m_ViewportFocused = false,  m_ViewportHovered = false;
+		glm::vec2 m_ViewportSize;// = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportBounds[2];
+
 
 		Ref<Framebuffer> m_Framebuffer;
 
@@ -42,7 +45,7 @@ namespace Hazel
 
 		EditorCamera m_EditorCamera;
 
-		glm::vec2 m_ViewportSize;
+		
 
 		int m_GizmoType = -1;
 
