@@ -26,6 +26,7 @@ namespace Hazel
 		m_CameraController.SetZoomLevel(5.0f);
 
 		FramebufferSpecification fbSpec;
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth }; //two color buffers
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
@@ -87,12 +88,11 @@ namespace Hazel
 
 		//Render
 		Renderer::ResetStats();
-		
 		m_Framebuffer->Bind(); //Render following Scene into the framebuffer
-		
 		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0 });
 		RenderCommand::Clear();
 
+		//Update Scene
 		m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
 		m_Framebuffer->Unbind();
@@ -220,7 +220,7 @@ namespace Hazel
 			//}
 
 			//Get the image from the framebuffer
-			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+			uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID(1); //using the second color buffer
 			ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //last two parameters to flip the image
 		
 			// Gizmos
