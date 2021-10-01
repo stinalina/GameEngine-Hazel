@@ -37,7 +37,7 @@ namespace Hazel
 
         // Setup Dear ImGui style
         io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);  //TODO:: Make enum for fonts!
-        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 18.0f); //make this in if darkTheme...
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 20.0f); //make this in if darkTheme...
         //io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Balsamiq/BalsamiqSans-Regular.ttf", 18.0f);
 
         SetColorTheme(ColorTheme::Dark);

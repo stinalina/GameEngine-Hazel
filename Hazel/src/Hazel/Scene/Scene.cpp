@@ -74,7 +74,7 @@ namespace Hazel
 				for (auto entity : group)
 				{
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer::DrawQuad(transform.GetTransform(), sprite.Color);
+					Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 				Renderer::EndScene();
 			}
@@ -90,7 +90,7 @@ namespace Hazel
 		{
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			Renderer::DrawQuad(transform.GetTransform(), sprite.Color);
+			Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 		}
 
 		Renderer::EndScene();
