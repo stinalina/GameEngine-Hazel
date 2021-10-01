@@ -1460,6 +1460,7 @@
     </ClInclude>
     <ClInclude Include="src\Hazel\Math\Math.h" />
     <ClInclude Include="src\Hazel\Renderer\EditorCamera.h" />
+    <ClInclude Include="src\Hazel\Core\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Core\Application.cpp">

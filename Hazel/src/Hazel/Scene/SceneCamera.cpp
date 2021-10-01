@@ -32,8 +32,8 @@ namespace Hazel
 
 	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height) //need to be called bevor rendering something!
 	{
+		HZ_CORE_ASSERT(width > 0 && height > 0, "vieportSize is out of bounds!");
 		m_AspectRatio = (float)width / (float)height;
-
 		RecalculateProjection();
 	}
 

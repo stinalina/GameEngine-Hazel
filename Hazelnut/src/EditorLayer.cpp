@@ -33,30 +33,13 @@ namespace Hazel
 
 		m_ActiveScene = CreateRef<Scene>();
 
-		
-
-		class CameraController : public ScriptableEntity
+		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		if (commandLineArgs.Count > 1)
 		{
-		public:
-			virtual void OnCreate() override {}
-			virtual void OnDestroy() override {}
-
-			virtual void OnUpdate(Timestep ts) override
-			{
-				auto& translation = GetComponent<TransformComponent>().Translation;
-				float speed = 5.0f;
-
-				if (Input::IsKeyPressed(Key::A))
-					translation.x -= speed * ts;
-				if (Input::IsKeyPressed(Key::D))
-					translation.x += speed * ts;
-				if (Input::IsKeyPressed(Key::W))
-					translation.y += speed * ts;
-				if (Input::IsKeyPressed(Key::S))
-					translation.y -= speed * ts;
-			}
-		};
-
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene); //Auto save a scene?!
+			serializer.Deserialize(sceneFilePath);
+		}
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
