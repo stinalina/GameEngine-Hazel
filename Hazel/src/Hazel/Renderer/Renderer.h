@@ -71,7 +71,7 @@ namespace Hazel
 
 		static SceneData* s_SceneData;
 
-		static void FlushAndReset();
+		static void NextBatch();
 		static void StartBatch();
 	};
 

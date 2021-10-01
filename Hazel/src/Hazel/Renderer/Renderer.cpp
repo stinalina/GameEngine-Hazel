@@ -115,7 +115,7 @@ namespace Hazel
 	{
 		HZ_PROFILE_FUNCTION();
 
-		delete[] s_Data.QuadVertexBufferBase; // TODO:: hab ich ergänzt
+		delete[] s_Data.QuadVertexBufferBase; 
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -152,15 +152,16 @@ namespace Hazel
 	{
 		HZ_PROFILE_FUNCTION();
 
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
-
 		Flush();
 	}
 
 	void Renderer::Flush()
 	{
-		HZ_PROFILE_FUNCTION();
+		if (s_Data.QuadIndexCount == 0)
+			return; // Nothing to draw
+
+		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
 		//Bind textures
 		for (int32_t i = 0; i < s_Data.TextureSlotIndex; i++)
@@ -170,9 +171,9 @@ namespace Hazel
 		s_Data.Stats.DrawCalls++;
 	}
 
-	void Renderer::FlushAndReset()
+	void Renderer::NextBatch()
 	{
-		EndScene();
+		Flush();
 		StartBatch();
 	}
 
@@ -229,7 +230,7 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		const glm::vec2* textureCoords = subtexture->GetTexCoords();
@@ -273,7 +274,7 @@ namespace Hazel
 	void Renderer::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
 	{
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		const float textureIndex = 0.0f; //White texture
 		const float tilingFactor = 0.0f;
@@ -302,7 +303,7 @@ namespace Hazel
 	void Renderer::DrawQuad(const glm::mat4& transform, const Ref<Texture2D> texture, float tilingFactor, const glm::vec4& tintColor, int entityID)
 	{
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		constexpr glm::vec2 textureCoords[] = {
@@ -357,7 +358,7 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		const float textureIndex = 0.0f; //White texture
 		const float tilingFactor = 0.0f;
@@ -397,7 +398,7 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		constexpr glm::vec2 textureCoords[] = {
@@ -452,7 +453,7 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		if (s_Data.QuadIndexCount >= RendererData::MaxIndices || s_Data.TextureSlotIndex > 31)
-			FlushAndReset();
+			NextBatch();
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		const glm::vec2* textureCoords = subtexture->GetTexCoords();
