@@ -29,7 +29,6 @@ namespace Hazel
 
 	private:
 		bool m_BlockEvents = true;
-		float m_Time = 0.0f;
 
 		ColorTheme m_ColorTheme = ColorTheme::Dark;
 
