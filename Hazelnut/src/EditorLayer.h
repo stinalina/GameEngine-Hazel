@@ -29,12 +29,13 @@ namespace Hazel
 
 		void NewScene();
 		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
 		void SaveSceneAs();
 
 		Hazel::OrthographicCameraController m_CameraController;
 
 		bool m_ViewportFocused = false,  m_ViewportHovered = false;
-		glm::vec2 m_ViewportSize;// = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportSize; // = { 0.0f, 0.0f };
 		glm::vec2 m_ViewportBounds[2];
 
 

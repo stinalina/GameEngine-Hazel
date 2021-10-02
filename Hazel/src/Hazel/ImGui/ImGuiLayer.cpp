@@ -36,7 +36,7 @@ namespace Hazel
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable multi-Viewport
 
         // Setup Dear ImGui style
-        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 18.0f);  //TODO:: Make enum for fonts!
+        io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", 20.0f);  //TODO:: Make enum for fonts!
         io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Regular.ttf", 20.0f); //make this in if darkTheme...
         //io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/Balsamiq/BalsamiqSans-Regular.ttf", 18.0f);
 
