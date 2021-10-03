@@ -1,11 +1,10 @@
 #pragma once
-//#include <stdint.h>
 
 namespace Hazel
 {
 	using KeyCode = uint16_t;
 
-	namespace Key //TODO remove enum; rename namespace Key to KeyCode
+	namespace Key 
 	{
 		enum : KeyCode
 		{

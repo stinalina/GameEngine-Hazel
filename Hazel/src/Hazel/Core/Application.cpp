@@ -1,27 +1,22 @@
 #include "hzpch.h"
 #include "Application.h"
 
-#include "Input.h"
 #include "Hazel/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Hazel 
 {
-#define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
-
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
 		: m_CommandLineArgs(args)
 	{
-		HZ_PROFILE_FUNCTION();
-
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create(WindowProps(name)));
-		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+		m_Window = Scope<Window>(Window::Create(WindowProps(name)));
+		m_Window->SetEventCallback(HZ_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
 
@@ -29,30 +24,16 @@ namespace Hazel
 		PushOverlay(m_ImGuiLayer);
 	}
 
-	Application::~Application()
-	{
-
-	}
-
 	void Application::PushLayer(Layer* layer)
 	{
-		HZ_PROFILE_FUNCTION();
-
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
-		HZ_PROFILE_FUNCTION();
-
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
-	}
-
-	void Application::Close()
-	{
-		m_Running = false;
 	}
 
 	void Application::OnEvent(Event& e)
@@ -60,8 +41,8 @@ namespace Hazel
 		HZ_PROFILE_FUNCTION();
 
 		EventDispatcher dispatcher(e);
-		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
+		dispatcher.Dispatch<WindowCloseEvent>(HZ_BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -106,6 +87,11 @@ namespace Hazel
 		}
 	}
 
+	void Application::Close()
+	{
+		m_Running = false; 
+	}
+
 	bool Application::OnWindowClose(WindowCloseEvent& e)
 	{
 		m_Running = false;
@@ -114,8 +100,6 @@ namespace Hazel
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
-		HZ_PROFILE_FUNCTION();
-
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;
@@ -124,7 +108,6 @@ namespace Hazel
 
 		m_Minimized = false;
 		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
-
 
 		return false;
 	}

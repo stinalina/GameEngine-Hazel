@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hzpch.h"
-
 #include "Hazel/Core/Core.h"
 #include "Hazel/Events/Event.h"
 
@@ -14,18 +12,17 @@ namespace Hazel
 		uint32_t Height;
 
 		WindowProps(const std::string& title = "Hazel Engine",
-					uint32_t width = 1600,
+					uint32_t width = 1600, //TODO Catch window size from system!
 					uint32_t height = 900):
 			Title(title), Width(width), Height(height) {}
 	};
 
-	// Interface representing a desktop system based Window
-	class HAZEL_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;
 
-		virtual ~Window() {}
+		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
 

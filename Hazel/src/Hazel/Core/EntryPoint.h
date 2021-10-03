@@ -1,12 +1,9 @@
 #pragma once
-#include "Hazel.h"
 #include "Hazel/Core/Application.h"
 
-#ifdef HZ_PLATFORM_WINDOWS
-
-// extern tells the compiler that this function exits somewhere. The compiler does not care where; 
+// extern tells the compiler that this function exists somewhere. The compiler does not care where; 
 // the linker will resolve all of this references to the one definition that it finds in one of the 
-// compiled files -> in our case on the clientSide in SandboxApp.cpp
+// compiled files -> in our case on the clientSide in Hazelnut.cpp
 extern Hazel::Application* Hazel::CreateApplication(ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv)
@@ -25,5 +22,3 @@ int main(int argc, char** argv)
 	delete app;
 	HZ_PROFILE_END_SESSION();
 }
-
-#endif
