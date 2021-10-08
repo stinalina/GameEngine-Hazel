@@ -14,7 +14,7 @@ namespace Hazel
 		enum class ColorTheme {Dark, Hazel};
 
 		ImGuiLayer();
-		~ImGuiLayer();
+		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetech() override;
