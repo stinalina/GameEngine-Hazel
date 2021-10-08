@@ -5,6 +5,8 @@
 
 #include "Hazel/Renderer/EditorCamera.h"
 
+class b2World; //forward declaration
+
 namespace Hazel
 {
 	class Entity; //forward declaration
@@ -12,11 +14,14 @@ namespace Hazel
 	class Scene
 	{
 	public:
-		Scene();
-		~Scene();
+		Scene() = default;
+		~Scene() = default;
 
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
+
+		void OnRuntimeStart();
+		void OnRuntimeStop();
 
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
@@ -28,6 +33,8 @@ namespace Hazel
 		entt::registry m_Registry; // Container for all Entities
 
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+
+		b2World* m_PhysicsWorld = nullptr;
 
 		friend class Entity;
 		friend class SceneSerializer;
