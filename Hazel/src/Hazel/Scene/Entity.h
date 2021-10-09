@@ -37,6 +37,8 @@ namespace Hazel
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 		
+		uint64_t GetID() { return m_ID; }
+
 		//Operators
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator entt::entity() const { return m_EntityHandle; }
@@ -47,6 +49,7 @@ namespace Hazel
 		bool operator!=(const Entity& other) const { return !(*this == other); }
 
 	private:
+		uint64_t m_ID; //use entt count for this
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
 	};
