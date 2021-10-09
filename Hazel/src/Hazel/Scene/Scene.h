@@ -29,6 +29,10 @@ namespace Hazel
 
 		Entity GetPrimaryCameraEntity();
 
+		void DuplicateEntity(Entity entity);
+
+		static Ref<Scene> Copy(Ref<Scene> scene);
+
 	private:
 		entt::registry m_Registry; // Container for all Entities
 

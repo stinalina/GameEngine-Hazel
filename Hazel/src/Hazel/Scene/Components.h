@@ -7,7 +7,6 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
 
 #include "Hazel/Renderer/Texture.h"
 
@@ -69,6 +68,7 @@ namespace Hazel
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	class ScriptableEntity; //forward declaration to avoid circulated includes
 	struct NativeScriptComponent
 	{
 		ScriptableEntity* Instance = nullptr;
