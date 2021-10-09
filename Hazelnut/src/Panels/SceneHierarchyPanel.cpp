@@ -253,12 +253,13 @@ namespace Hazel
 
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			//strcpy_s(buffer, sizeof(buffer), tag.c_str());
 			std::strncpy(buffer, tag.c_str(), sizeof(buffer));
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 			{
 				tag = std::string(buffer);
 			}
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("ID = %i", entity.GetID());
 		}
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
