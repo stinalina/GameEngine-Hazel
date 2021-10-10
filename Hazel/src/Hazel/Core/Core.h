@@ -39,7 +39,7 @@ namespace Hazel
 	using Scope = std::unique_ptr<T>;
 
 	template<typename T, typename ... Args>
-	constexpr Scope<T> CreateScope(Args&& ... args)
+	constexpr Scope<T> CreateScope(Args&& ... args) //The constexpr specifier declares that it is possible to evaluate the value of the function or variable at compile time.
 	{
 		return std::make_unique<T>(std::forward<Args>(args) ...);
 	}

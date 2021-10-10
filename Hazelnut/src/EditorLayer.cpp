@@ -17,6 +17,8 @@ namespace Hazel
 {
 	extern const std::filesystem::path g_AssetPath;
 
+	static bool s_KeycodeException = false; //This is used to prevent strg + keycodes from beeing blocked outside the viewport
+
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer"), m_CameraController(1280.0f / 720.0f)
 	{
@@ -43,7 +45,7 @@ namespace Hazel
 		if (commandLineArgs.Count > 1)
 		{
 			auto sceneFilePath = commandLineArgs[1];
-			SceneSerializer serializer(m_ActiveScene); //Auto save a scene?!
+			SceneSerializer serializer(m_ActiveScene); //TODO: Auto save a scene?!
 			serializer.Deserialize(sceneFilePath);
 		}
 
@@ -235,9 +237,8 @@ namespace Hazel
 			m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
 			m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-			m_ViewportFocused = ImGui::IsWindowFocused();
 			m_ViewportHovered = ImGui::IsWindowHovered();
-			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered); //!m_ViewportFocused &&
+			Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered); 
 
 			ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
@@ -373,6 +374,12 @@ namespace Hazel
 
 	void EditorLayer::OnEvent(Hazel::Event& e)
 	{
+		//if (typeid(e) != typeid(KeyEvent)) 
+		//{
+		//	m_ViewportHovered = ImGui::IsWindowHovered();
+		//	Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered); 
+		//} //else: the on key pressed function  handled it by itself
+
 		m_CameraController.OnEvent(e);
 		m_EditorCamera.OnEvent(e);
 
@@ -390,12 +397,24 @@ namespace Hazel
 		bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
 		bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
 
+		////proof to block events; is noct working!
+		//m_ViewportHovered = ImGui::IsWindowHovered();
+		//if (!m_ViewportHovered)
+		//{
+		//	if (e.GetKeyCode() == control) //prevent the strg keycodes from beeing blocked outside hovering viewport!
+		//		Application::Get().GetImGuiLayer()->BlockEvents(false);
+		//	else
+		//		Application::Get().GetImGuiLayer()->BlockEvents(!m_ViewportHovered);
+		//}
+
 		//Windows
 		switch (e.GetKeyCode())
 		{
 		case Key::N:
-			if (control)
-				NewScene();
+			if (control) 
+			{
+				s_KeycodeException = true; NewScene();
+			}
 			break;
 
 		case Key::O:
@@ -404,15 +423,19 @@ namespace Hazel
 			break;
 
 		case Key::D:
-			if (control)
-				DuplicateSelectedEntity();
+		{s_KeycodeException = true;
+		if (control) {
+			s_KeycodeException = true;
+			DuplicateSelectedEntity();
+		}}
 			break;
 
 		case Key::S:
 			if (control && shift)
 				SaveSceneAs();
 			break;
-
+		
+		
 		//Gizmos
 		case Key::Q: 
 			if(!ImGuizmo::IsUsing()) m_GizmoType = -1;
