@@ -4,7 +4,7 @@
 
 namespace Hazel {
 
-	class Timer
+	class Timer //TODO:: Do I need/use this class?!
 	{
 	public:
 		Timer()

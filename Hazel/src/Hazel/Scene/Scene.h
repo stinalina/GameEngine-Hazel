@@ -33,8 +33,12 @@ namespace Hazel
 
 		static Ref<Scene> Copy(Ref<Scene> scene);
 
+		const std::string* GetFilepath() { return &openSceneFilepath; }
+
 	private:
 		entt::registry m_Registry; // Container for all Entities
+
+		std::string openSceneFilepath;
 
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 

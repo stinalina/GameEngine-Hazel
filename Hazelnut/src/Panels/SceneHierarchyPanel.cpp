@@ -9,7 +9,7 @@
 #include <cstring>
 #include <filesystem>
 
-namespace Hazel 
+namespace Hazel
 {
 	extern const std::filesystem::path g_AssetPath;
 
@@ -27,74 +27,83 @@ namespace Hazel
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Scene Hierarchy");
-			m_Context->m_Registry.each([&](auto entityID)
-				{
-					Entity entity{ entityID , m_Context.get() };
-					DrawEntityNode(entity);
-				});
-
-			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) //deselect an entity
-				m_SelectionContext = {};
-
-			// Right-click on blank space
-			if (ImGui::BeginPopupContextWindow(0, 1, false))
+		m_Context->m_Registry.each([&](auto entityID)
 			{
-				if (ImGui::MenuItem("Create Empty Entity"))
-					m_Context->CreateEntity("Empty Entity");
+				Entity entity{ entityID , m_Context.get() };
+				DrawEntityNode(entity);
+			});
 
-				ImGui::EndPopup();
-			}
+		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered()) //deselect an entity
+			m_SelectionContext = {};
+
+		// Right-click on blank space
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+				m_Context->CreateEntity("Empty Entity");
+
+			ImGui::EndPopup();
+		}
 		ImGui::End();
 
 
 		ImGui::Begin("Properties");
-			if (m_SelectionContext)
+		if (m_SelectionContext)
+		{
+			DrawComponents(m_SelectionContext);
+
+			// Right-click on blank space
+			if (ImGui::BeginPopupContextWindow(0, 1, false))
 			{
-				DrawComponents(m_SelectionContext);
-
-				// Right-click on blank space
-				if (ImGui::BeginPopupContextWindow(0, 1, false))
+				ImGui::Text("Add Component:");
+				if (!m_SelectionContext.HasComponent<CameraComponent>())
 				{
-					ImGui::Text("Add Component:");
-					if (!m_SelectionContext.HasComponent<CameraComponent>())
+					if (ImGui::MenuItem("Camera"))
 					{
-						if (ImGui::MenuItem("Camera"))
-						{
-							m_SelectionContext.AddComponent<CameraComponent>();
-							ImGui::CloseCurrentPopup();
-						}
+						m_SelectionContext.AddComponent<CameraComponent>();
+						ImGui::CloseCurrentPopup();
 					}
-				
-					if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-					{
-						if (ImGui::MenuItem("Sprite Renderer"))
-						{
-							m_SelectionContext.AddComponent<SpriteRendererComponent>();
-							ImGui::CloseCurrentPopup();
-						}
-					}
-					
-					if(!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
-					{
-						if (ImGui::MenuItem("Rigidbody 2D"))
-						{
-							m_SelectionContext.AddComponent<Rigidbody2DComponent>();
-							ImGui::CloseCurrentPopup();
-						}
-					}
-
-					if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
-					{
-						if (ImGui::MenuItem("Box Collider 2D"))
-						{
-							m_SelectionContext.AddComponent<BoxCollider2DComponent>();
-							ImGui::CloseCurrentPopup();
-						}
-					}
-
-					ImGui::EndPopup();
 				}
+
+				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
+				{
+					if (ImGui::MenuItem("Sprite Renderer"))
+					{
+						m_SelectionContext.AddComponent<SpriteRendererComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (!m_SelectionContext.HasComponent<ParticleSystemComponent>())
+				{
+					if (ImGui::MenuItem("Particle System"))
+					{
+						m_SelectionContext.AddComponent<ParticleSystemComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
+				{
+					if (ImGui::MenuItem("Rigidbody 2D"))
+					{
+						m_SelectionContext.AddComponent<Rigidbody2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
+				{
+					if (ImGui::MenuItem("Box Collider 2D"))
+					{
+						m_SelectionContext.AddComponent<BoxCollider2DComponent>();
+						ImGui::CloseCurrentPopup();
+					}
+				}
+
+				ImGui::EndPopup();
 			}
+		}
 		ImGui::End();
 	}
 
@@ -150,7 +159,7 @@ namespace Hazel
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::Text(label.c_str());
 		ImGui::NextColumn();
-		
+
 		ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
 
@@ -205,6 +214,60 @@ namespace Hazel
 		ImGui::PopID();
 	}
 
+	static void DrawVec2Control(const std::string& label, glm::vec2& values, float resetValue = 0.0f, float columnWidth = 100.0f)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		auto boldFont = io.Fonts->Fonts[0]; 
+
+		ImGui::PushID(label.c_str());
+
+		ImGui::Columns(2);
+
+		ImGui::SetColumnWidth(0, columnWidth);
+		ImGui::Text(label.c_str());
+		ImGui::NextColumn();
+
+		ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 });
+
+		float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+		ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.9f, 0.2f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.8f, 0.1f, 0.15f, 1.0f });
+		ImGui::PushFont(boldFont);
+		if (ImGui::Button("X", buttonSize))
+			values.x = resetValue;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##X", &values.x, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.3f, 1.0f });
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.2f, 1.0f });
+		ImGui::PushFont(boldFont);
+		if (ImGui::Button("Y", buttonSize))
+			values.y = resetValue;
+		ImGui::PopFont();
+		ImGui::PopStyleColor(3);
+
+		ImGui::SameLine();
+		ImGui::DragFloat("##Y", &values.y, 0.1f, 0.0f, 0.0f, "%.2f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+
+		ImGui::PopStyleVar();
+
+		ImGui::Columns(1);
+
+		ImGui::PopID();
+	}
+
 	template<typename T, typename UIFunction>
 	static void DrawComponent(const std::string& name, Entity entity, UIFunction uiFunction)
 	{
@@ -215,9 +278,9 @@ namespace Hazel
 			ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
 
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
-				float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-				ImGui::Separator();
-				bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+			float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+			ImGui::Separator();
+			bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
 			ImGui::PopStyleVar();
 			ImGui::SameLine(contentRegionAvailable.x - lineHeight * 0.5f);
 			if (ImGui::Button("+", ImVec2{ lineHeight, lineHeight }))
@@ -244,7 +307,7 @@ namespace Hazel
 				entity.RemoveComponent<T>();
 		}
 	}
-	
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
@@ -263,129 +326,153 @@ namespace Hazel
 		}
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
-		{	
-			DrawVec3Control("Translation", component.Translation);
-			glm::vec3 rotation = glm::degrees(component.Rotation);
-			DrawVec3Control("Rotation", rotation);
-			component.Rotation = glm::radians(rotation);
-			DrawVec3Control("Scale", component.Scale, 1.0f);
-		});
+			{
+				DrawVec3Control("Translation", component.Translation);
+				glm::vec3 rotation = glm::degrees(component.Rotation);
+				DrawVec3Control("Rotation", rotation);
+				component.Rotation = glm::radians(rotation);
+				DrawVec3Control("Scale", component.Scale, 1.0f);
+			});
 
 		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
-		{
-			auto& camera = component.Camera;
-			ImGui::Checkbox("Main Camera", &component.Primary);
-
-			const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
-			const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
-
-			if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
 			{
-				for (int i = 0; i < 2; i++)
+				auto& camera = component.Camera;
+				ImGui::Checkbox("Main Camera", &component.Primary);
+
+				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+				const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+
+				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
 				{
-					bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
-					if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+					for (int i = 0; i < 2; i++)
 					{
-						currentProjectionTypeString = projectionTypeStrings[i];
-						camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+						{
+							currentProjectionTypeString = projectionTypeStrings[i];
+							camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
-
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
-			}
-			
-			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
-			{
-				float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
-				if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
-					camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
 
-				float perspectiveNear = camera.GetPerspectiveNearClip();
-				if (ImGui::DragFloat("Near", &perspectiveNear))
-					camera.SetPerspectiveNearClip(perspectiveNear);
-
-				float perspectiveFar = camera.GetPerspectiveFarClip();
-				if (ImGui::DragFloat("Far", &perspectiveFar))
-					camera.SetPerspectiveFarClip(perspectiveFar);
-			}
-
-			if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
-			{
-				float orthoSize = camera.GetOrthographicSize();
-				if (ImGui::DragFloat("Size", &orthoSize))
-					camera.SetOrthographicSize(orthoSize);
-
-				float orthoNear = camera.GetOrthographicNearClip();
-				if (ImGui::DragFloat("Near", &orthoNear))
-					camera.SetOrthographicNearClip(orthoNear);
-
-				float orthoFar = camera.GetOrthographicFarClip();
-				if (ImGui::DragFloat("Far", &orthoFar))
-					camera.SetOrthographicFarClip(orthoFar);
-
-				//ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
-			}
-		});
-	
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
-		{
-			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-
-			ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
 				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path; 
-					
-					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-					if (texture->IsLoaded())
-						component.Texture = texture;
-					else
-						HZ_WARN("Could not load texture {0}", texturePath.filename().string());
+					float perspectiveVerticalFov = glm::degrees(camera.GetPerspectiveVerticalFOV());
+					if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFov))
+						camera.SetPerspectiveVerticalFOV(glm::radians(perspectiveVerticalFov));
+
+					float perspectiveNear = camera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near", &perspectiveNear))
+						camera.SetPerspectiveNearClip(perspectiveNear);
+
+					float perspectiveFar = camera.GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far", &perspectiveFar))
+						camera.SetPerspectiveFarClip(perspectiveFar);
 				}
-				ImGui::EndDragDropTarget();
-			}
-			
-			ImGui::DragFloat("TilingFactor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
-		});
+
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				{
+					float orthoSize = camera.GetOrthographicSize();
+					if (ImGui::DragFloat("Size", &orthoSize))
+						camera.SetOrthographicSize(orthoSize);
+
+					float orthoNear = camera.GetOrthographicNearClip();
+					if (ImGui::DragFloat("Near", &orthoNear))
+						camera.SetOrthographicNearClip(orthoNear);
+
+					float orthoFar = camera.GetOrthographicFarClip();
+					if (ImGui::DragFloat("Far", &orthoFar))
+						camera.SetOrthographicFarClip(orthoFar);
+
+					//ImGui::Checkbox("Fixed Aspect Ratio", &component.FixedAspectRatio);
+				}
+			});
+
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = std::filesystem::path(g_AssetPath) / path;
+
+						Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+						if (texture->IsLoaded())
+							component.Texture = texture;
+						else
+							HZ_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::DragFloat("TilingFactor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
+			});
 
 		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
-		{
-			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
-			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
-			if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 			{
-				for (int i = 0; i < 2; i++)
+				const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
+				const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
+				if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
 				{
-					bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
-					if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+					for (int i = 0; i < 2; i++)
 					{
-						currentBodyTypeString = bodyTypeStrings[i];
-						component.Type = (Rigidbody2DComponent::BodyType)i;
+						bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+						if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+						{
+							currentBodyTypeString = bodyTypeStrings[i];
+							component.Type = (Rigidbody2DComponent::BodyType)i;
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
 
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
 
-				ImGui::EndCombo();
-			}
-
-			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
-		});
+				ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+			});
 
 		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
-		{
-			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
-			ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
-			ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
-		});
+			{
+				ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+				ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
+				ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+			});
+
+		DrawComponent<ParticleSystemComponent>("Particle System", entity, [](auto& component)
+			{
+				//TODO set maxParticle//PoolSize
+				ImGui::Checkbox("Show Particles", &component.Show);
+				ImGui::Separator();
+
+				//DrawVec2Control("Position", component.Particle.Position); //TODO remove; This one will have the positions of it's entity object!
+		
+				ImGui::DragFloat("Life Time", &component.Particle.LifeTime, 0.1f, 0.5f, 5.0f);
+
+				ImGui::Text("Color");
+				ImGui::ColorEdit4("Begin", glm::value_ptr(component.Particle.ColorBegin));
+				ImGui::ColorEdit4("End", glm::value_ptr(component.Particle.ColorEnd));
+
+				ImGui::Text("Velocity");
+				ImGui::DragFloat2("Velocity", glm::value_ptr(component.Particle.Velocity));
+				ImGui::DragFloat2("Variation", glm::value_ptr(component.Particle.VelocityVariation));
+
+				ImGui::Text("Size");
+				ImGui::DragFloat("Begin", &component.Particle.SizeBegin, 0.1f, 0.0f, 5.0f);
+				ImGui::DragFloat("End", &component.Particle.SizeEnd, 0.1f, 0.0f, 5.0f);
+				ImGui::DragFloat("Variation", &component.Particle.SizeVariation);
+			});
 	}
 }

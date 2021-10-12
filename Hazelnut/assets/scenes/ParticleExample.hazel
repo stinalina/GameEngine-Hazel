@@ -1,0 +1,39 @@
+Scene: ParticleExample.hazel
+Entities:
+  - Entity: 1
+    TagComponent:
+      Tag: ParticleSystem
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ParticleSystemComponent:
+      ShowParticles: true
+      ParticleProps:
+        Position: [0, 0]
+        LifeTime: 1
+        ColorBegin: [0.730988801, 0.996078432, 0.482352883, 1]
+        ColorEnd: [0.378890634, 0.786476851, 0.0279885028, 1]
+        Velocity: [0, 0]
+        VelocityVariation: [3, 1]
+        SizeBegin: 0.5
+        SizeEnd: 0
+        SizeVariation: 0.300000012
+  - Entity: 0
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false

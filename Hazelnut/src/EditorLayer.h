@@ -30,6 +30,7 @@ namespace Hazel
 		void NewScene();
 		void OpenScene();
 		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
 		void SaveSceneAs();
 
 		void OnScenePlay();
@@ -37,35 +38,28 @@ namespace Hazel
 
 		void DuplicateSelectedEntity();
 
-		//UI Panels
 		void UI_Toolbar();
 
-		Hazel::OrthographicCameraController m_CameraController;
+		OrthographicCameraController m_CameraController;
+		EditorCamera m_EditorCamera;
 
 		bool m_ViewportFocused = false,  m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize; // = { 0.0f, 0.0f };
 		glm::vec2 m_ViewportBounds[2];
 
-
 		Ref<Framebuffer> m_Framebuffer;
 
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene, m_RuntimeScene;
-		Entity m_SquareEntity;
-		Entity m_CameraEntity;
-		Entity m_SecondCamera;
-
-		Entity m_HoveredEntity;
-
-		EditorCamera m_EditorCamera;
-
-		int m_GizmoType = -1;
-
 		enum class SceneState
 		{
 			Edit = 0, Play = 1
 		};
 		SceneState m_SceneState = SceneState::Edit;
+
+		Entity m_HoveredEntity;
+
+		int m_GizmoType = -1;
 
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;

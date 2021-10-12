@@ -6,7 +6,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "SceneCamera.h"
+#include "Hazel/Scene/SceneCamera.h"
+#include "Hazel/Scene/ParticleSystem.h"
 
 #include "Hazel/Renderer/Texture.h"
 
@@ -35,12 +36,7 @@ namespace Hazel
 
 		glm::mat4 GetTransform() const
 		{
-			//glm::mat4 rotation = 
-			//	  glm::rotate(glm::mat4(1.0f), Rotation.x, { 1, 0, 0 })
-			//	* glm::rotate(glm::mat4(1.0f), Rotation.y, { 0, 1, 0 })
-			//	* glm::rotate(glm::mat4(1.0f), Rotation.z, { 0, 0, 1 });
-			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
-
+			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation)); //quat == Quaternion
 			return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
 		}
 	};
@@ -57,7 +53,6 @@ namespace Hazel
 			: Color(color) {}
 	};
 
-	//the scene camera doesn't work!
 	struct CameraComponent
 	{
 		SceneCamera Camera;
@@ -82,6 +77,16 @@ namespace Hazel
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
+	};
+
+	struct ParticleSystemComponent
+	{
+		ParticleSystem Instance;
+		ParticleProps Particle;
+		bool Show = true;
+
+		ParticleSystemComponent() = default;
+		ParticleSystemComponent(const ParticleSystemComponent&) = default;
 	};
 
 	// Physics

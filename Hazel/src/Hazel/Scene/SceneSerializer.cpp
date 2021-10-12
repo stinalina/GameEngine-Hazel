@@ -230,6 +230,32 @@ namespace Hazel
 			out << YAML::EndMap; // BoxCollider2DComponent
 		}
 
+		if (entity.HasComponent<ParticleSystemComponent>())
+		{
+			out << YAML::Key << "ParticleSystemComponent";
+			out << YAML::BeginMap; // ParticleSystemComponent
+
+			auto& particleSystemComponent = entity.GetComponent<ParticleSystemComponent>();
+			auto& particle = particleSystemComponent.Particle;
+
+			out << YAML::Key << "ShowParticles" << YAML::Value << particleSystemComponent.Show;
+
+			out << YAML::Key << "ParticleProps" << YAML::Value;
+			out << YAML::BeginMap; // ParticleProps
+			out << YAML::Key << "Position" << YAML::Value << particle.Position;
+			out << YAML::Key << "LifeTime" << YAML::Value << particle.LifeTime;
+			out << YAML::Key << "ColorBegin" << YAML::Value << particle.ColorBegin;
+			out << YAML::Key << "ColorEnd" << YAML::Value << particle.ColorEnd;
+			out << YAML::Key << "Velocity" << YAML::Value << particle.Velocity;
+			out << YAML::Key << "VelocityVariation" << YAML::Value << particle.VelocityVariation;
+			out << YAML::Key << "SizeBegin" << YAML::Value << particle.SizeBegin;
+			out << YAML::Key << "SizeEnd" << YAML::Value << particle.SizeEnd;
+			out << YAML::Key << "SizeVariation" << YAML::Value << particle.SizeVariation;
+			out << YAML::EndMap; // ParticleProps
+
+			out << YAML::EndMap; // ParticleSystemComponent
+		}
+
 		out << YAML::EndMap; // Entity
 	}
 
@@ -237,7 +263,7 @@ namespace Hazel
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << filepath.substr(filepath.find_last_of('\\') + 1);
 		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](auto entityID)
 			{
@@ -349,6 +375,25 @@ namespace Hazel
 					bc2d.Friction = boxCollider2DComponent["Friction"].as<float>();
 					bc2d.Restitution = boxCollider2DComponent["Restitution"].as<float>();
 					bc2d.RestitutionThreshold = boxCollider2DComponent["RestitutionThreshold"].as<float>();
+				}
+
+				auto particleSystemComponent = entity["ParticleSystemComponent"];
+				if (particleSystemComponent)
+				{
+					auto& ps = deserializedEntity.AddComponent<ParticleSystemComponent>();
+					auto& particle = particleSystemComponent["ParticleProps"];
+
+					ps.Show = particleSystemComponent["ShowParticles"].as<bool>();
+
+					ps.Particle.Position = particle["Position"].as<glm::vec2>();
+					ps.Particle.LifeTime = particle["LifeTime"].as<float>();
+					ps.Particle.ColorBegin = particle["ColorBegin"].as<glm::vec4>();
+					ps.Particle.ColorEnd = particle["ColorEnd"].as<glm::vec4>();
+					ps.Particle.Velocity = particle["Velocity"].as < glm::vec2>();
+					ps.Particle.VelocityVariation = particle["VelocityVariation"].as<glm::vec2>();
+					ps.Particle.SizeBegin = particle["SizeBegin"].as<float>();
+					ps.Particle.SizeEnd = particle["SizeEnd"].as<float>();
+					ps.Particle.SizeVariation = particle["SizeVariation"].as<float>();
 				}
 			}
 		}

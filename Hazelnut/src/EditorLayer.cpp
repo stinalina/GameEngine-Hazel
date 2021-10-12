@@ -320,7 +320,7 @@ namespace Hazel
 		ImGui::End(); // End of Dockspace
 	}
 
-	void EditorLayer::UI_Toolbar()
+	void EditorLayer::UI_Toolbar() //Currently only play/stop button
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
@@ -433,9 +433,10 @@ namespace Hazel
 		case Key::S:
 			if (control && shift)
 				SaveSceneAs();
+			else if (shift)
+				SaveScene();
 			break;
-		
-		
+
 		//Gizmos
 		case Key::Q: 
 			if(!ImGuizmo::IsUsing()) m_GizmoType = -1;
@@ -496,6 +497,12 @@ namespace Hazel
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 		}
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Serialize(*m_ActiveScene->GetFilepath());
 	}
 
 	void EditorLayer::SaveSceneAs()
