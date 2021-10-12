@@ -1,5 +1,23 @@
 Scene: ParticleExample.hazel
 Entities:
+  - Entity: 2
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
   - Entity: 1
     TagComponent:
       Tag: ParticleSystem
@@ -21,19 +39,10 @@ Entities:
         SizeVariation: 0.300000012
   - Entity: 0
     TagComponent:
-      Tag: Camera
+      Tag: Quad
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [1.75726736, 1.75473404, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
+    SpriteRendererComponent:
+      Color: [0.383248925, 0.359772563, 0.754448414, 1]

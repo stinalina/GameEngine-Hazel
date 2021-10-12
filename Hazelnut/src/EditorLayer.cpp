@@ -194,7 +194,10 @@ namespace Hazel
 				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 					OpenScene();
 
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+					SaveScene();
+
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
 					SaveSceneAs();
 
 				if (ImGui::MenuItem("Exit")) Hazel::Application::Get().Close();
@@ -433,7 +436,7 @@ namespace Hazel
 		case Key::S:
 			if (control && shift)
 				SaveSceneAs();
-			else if (shift)
+			else if (control)
 				SaveScene();
 			break;
 
@@ -496,6 +499,7 @@ namespace Hazel
 			m_ActiveScene = m_EditorScene;
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+			m_ActiveScene->SetFilepath(path.string());
 		}
 	}
 
@@ -503,6 +507,7 @@ namespace Hazel
 	{
 		SceneSerializer serializer(m_ActiveScene);
 		serializer.Serialize(*m_ActiveScene->GetFilepath());
+		HZ_CORE_INFO("Save Scene {0}", *m_ActiveScene->GetFilepath());
 	}
 
 	void EditorLayer::SaveSceneAs()
@@ -512,6 +517,7 @@ namespace Hazel
 		{
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Serialize(filepath);
+			m_ActiveScene->SetFilepath(filepath);
 		}
 	}
 
