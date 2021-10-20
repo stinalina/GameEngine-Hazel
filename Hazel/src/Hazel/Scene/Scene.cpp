@@ -220,34 +220,53 @@ namespace Hazel
 			if (mainCamera)
 			{
 				Renderer::BeginScene(mainCamera->GetProjection(), cameraTransform);
-				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-				for (auto entity : group)
+
+				//Render Sprites
+				//auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				//for (auto entity : spriteGroup)
+				//{
+				//	auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
+				//	Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				//}
+
+				auto spriteView = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+				for (auto entity : spriteView)
 				{
-					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					auto [transform, sprite] = spriteView.get<TransformComponent, SpriteRendererComponent>(entity);
 					Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
-				Renderer::EndScene();
 
-				//Particles
-//TODO::
-#if 0	if (false)//(Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
+				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : view)
 				{
-					auto [x, y] = Hazel::Input::GetMousePosition();
-					auto width = Hazel::Application::Get().GetWindow().GetWidth();
-					auto height = Hazel::Application::Get().GetWindow().GetHeight();
+					auto [transform, circleRenderer] = view.get<TransformComponent, CircleRendererComponent>(entity);
 
-					auto bounds = m_CameraController.GetBounds();
-					auto pos = m_CameraController.GetCamera().GetPosition();
-					x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
-					y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();
-					m_Particle.Position = { x + pos.x, y + pos.y };
-					for (int i = 0; i < 30; i++)
-						m_ParticleSystem.Emit(m_Particle);
+					Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, (int)entity);
+				}
+				
+				//Render Particles
+				//auto particleGroup = m_Registry.group<TransformComponent>(entt::get<ParticleSystemComponent>);
+				//for (auto entity : particleGroup)
+				//{
+				//	auto [transform, particles] = particleGroup.get<TransformComponent, ParticleSystemComponent>(entity);
+				//	particles.Particle.Position = glm::vec2(transform.Translation.x, transform.Translation.y);
+				//	particles.Instance.OnUpdate(ts);
+				//	particles.Instance.OnRender(*mainCamera);
+				//}
+				
+				//TODO:: This is not working. Can't find any ParticleSystemComponent!?
+
+				auto particleView = m_Registry.view<TransformComponent, ParticleSystemComponent>();
+				for (auto entity : particleView)
+				{
+					HZ_CORE_INFO("Found some particle to render!");
+					auto [transform, particles] = particleView.get<TransformComponent, ParticleSystemComponent>(entity);
+					particles.Particle.Position = glm::vec2(transform.Translation.x, transform.Translation.y);
+					particles.Instance.OnUpdate(ts);
+					particles.Instance.OnRender(*mainCamera);
 				}
 
-				m_ParticleSystem.OnUpdate(ts);
-				m_ParticleSystem.OnRender(m_CameraController.GetCamera());
-#endif
+				Renderer::EndScene();
 			}
 		}
 	}
@@ -262,6 +281,14 @@ namespace Hazel
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
 			Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+		}
+
+		auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+		for (auto entity : view)
+		{
+			auto [transform, circleRenderer] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+			Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, (int)entity);
 		}
 
 		Renderer::EndScene();

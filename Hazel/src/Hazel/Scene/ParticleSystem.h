@@ -6,7 +6,7 @@ namespace Hazel
 {
 	struct ParticleProps
 	{
-		glm::vec2 Position; //TODO:: This one will have the positions of it's entity object!
+		glm::vec2 Position; //Position is set during the rendering process with the transformComponent
 		glm::vec2 Velocity = { 0.0f, 0.0f },  VelocityVariation = { 3.0f, 1.0f };
 
 		glm::vec4 ColorBegin = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };;

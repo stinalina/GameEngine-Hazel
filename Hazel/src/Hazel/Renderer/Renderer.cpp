@@ -23,6 +23,17 @@ namespace Hazel
 		int EntityID;
 	};
 
+	struct CircleVertex
+	{
+		glm::vec3 WorldPosition;
+		float Thickness;
+		glm::vec2 LocalPosition;
+		glm::vec4 Color;
+
+		// Editor-only
+		int EntityID;
+	};
+
 	struct RendererData
 	{
 		static const uint32_t MaxQuads = 10000; //Max Quads per DrawCall
@@ -30,6 +41,7 @@ namespace Hazel
 		static const uint32_t MaxIndices = MaxQuads * 6;
 		static const uint32_t MaxTextureSlots = 32; 
 
+		//Quads
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
 		Ref<Shader> TextureShader;
@@ -38,6 +50,15 @@ namespace Hazel
 		uint32_t QuadIndexCount = 0;
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPtr = nullptr;
+
+		//Circles
+		Ref<VertexArray> CircleVertexArray;
+		Ref<VertexBuffer> CircleVertexBuffer;
+		Ref<Shader> CircleShader;
+
+		uint32_t CircleIndexCount = 0;
+		CircleVertex* CircleVertexBufferBase = nullptr;
+		CircleVertex* CircleVertexBufferPtr = nullptr;
 
 		std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
@@ -56,40 +77,61 @@ namespace Hazel
 
 		RenderCommand::Init(); //Important!
 
-		s_Data.QuadVertexArray = VertexArray::Create();
-
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
-		s_Data.QuadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3,	"a_Position"		}, 
-			{ ShaderDataType::Float4,	"a_Color"			},
-			{ ShaderDataType::Float2,	"a_TexCoord"		},
-			{ ShaderDataType::Float,	"a_TexIndex"		},
-			{ ShaderDataType::Float,	"a_TexTilingFactor"	},
-			{ ShaderDataType::Int,		"a_EntityID"		}
-		});
-		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
-
-		s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
-
-		uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-
-		uint32_t offset = 0;
-		for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+		//Quads
 		{
-			quadIndices[i + 0] = offset + 0;
-			quadIndices[i + 1] = offset + 1;
-			quadIndices[i + 2] = offset + 2;
+			s_Data.QuadVertexArray = VertexArray::Create();
 
-			quadIndices[i + 3] = offset + 2;
-			quadIndices[i + 4] = offset + 3;
-			quadIndices[i + 5] = offset + 0;
+			s_Data.QuadVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(QuadVertex));
+			s_Data.QuadVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3,	"a_Position"		},
+				{ ShaderDataType::Float4,	"a_Color"			},
+				{ ShaderDataType::Float2,	"a_TexCoord"		},
+				{ ShaderDataType::Float,	"a_TexIndex"		},
+				{ ShaderDataType::Float,	"a_TexTilingFactor"	},
+				{ ShaderDataType::Int,		"a_EntityID"		}
+				});
+			s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
-			offset += 4;
+			s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+
+			uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
+
+			uint32_t offset = 0;
+			for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
+			{
+				quadIndices[i + 0] = offset + 0;
+				quadIndices[i + 1] = offset + 1;
+				quadIndices[i + 2] = offset + 2;
+
+				quadIndices[i + 3] = offset + 2;
+				quadIndices[i + 4] = offset + 3;
+				quadIndices[i + 5] = offset + 0;
+
+				offset += 4;
+			}
+
+			Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
+			s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
+			delete[] quadIndices;
 		}
 
-		Ref<IndexBuffer> quadIB = IndexBuffer::Create(quadIndices, s_Data.MaxIndices);
-		s_Data.QuadVertexArray->SetIndexBuffer(quadIB);
-		delete[] quadIndices;
+		//Circles
+		{
+			s_Data.CircleVertexArray = VertexArray::Create();
+
+			s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
+			s_Data.CircleVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_WorldPosition" },
+				{ ShaderDataType::Float,  "a_Thickness"     },
+				{ ShaderDataType::Float2, "a_LocalPosition" },
+				{ ShaderDataType::Float4, "a_Color"         },
+				{ ShaderDataType::Int,    "a_EntityID"      }
+				});
+			s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
+
+			s_Data.CircleVertexBufferBase = new CircleVertex[s_Data.MaxVertices];
+			s_Data.CircleVertexArray->SetIndexBuffer(s_Data.QuadVertexArray->GetIndexBuffer());
+		}
 
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
@@ -100,8 +142,10 @@ namespace Hazel
 			samplers[i] = i;
 
 		s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+		s_Data.CircleShader.reset(Shader::Create("assets/shaders/Circle.glsl"));
+
+		//s_Data.TextureShader->Bind();
+		//s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
@@ -132,6 +176,9 @@ namespace Hazel
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
 
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetMat4("u_ViewProjection", viewProj);
+
 		StartBatch();
 	}
 
@@ -143,6 +190,9 @@ namespace Hazel
 
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.CircleShader->Bind();
+		s_Data.CircleShader->SetMat4("u_ViewProjection", viewProj);
 
 		StartBatch();
 	}
@@ -157,18 +207,31 @@ namespace Hazel
 
 	void Renderer::Flush()
 	{
-		if (s_Data.QuadIndexCount == 0)
-			return; // Nothing to draw
+		//Draw Quads
+		if(s_Data.QuadIndexCount)
+		{
+			uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
-		s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
+			//Bind textures
+			for (int32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+				s_Data.TextureSlots[i]->Bind(i);
 
-		//Bind textures
-		for (int32_t i = 0; i < s_Data.TextureSlotIndex; i++)
-			s_Data.TextureSlots[i]->Bind(i);
+			s_Data.TextureShader->Bind();
+			RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
 
-		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
-		s_Data.Stats.DrawCalls++;
+		// Draw circles
+		if (s_Data.CircleIndexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CircleVertexBufferPtr - (uint8_t*)s_Data.CircleVertexBufferBase);
+			s_Data.CircleVertexBuffer->SetData(s_Data.CircleVertexBufferBase, dataSize);
+
+			s_Data.CircleShader->Bind();
+			RenderCommand::DrawIndexed(s_Data.CircleVertexArray, s_Data.CircleIndexCount);
+			s_Data.Stats.DrawCalls++;
+		}
 	}
 
 	void Renderer::NextBatch()
@@ -179,9 +242,13 @@ namespace Hazel
 
 	void Renderer::StartBatch()
 	{
-		s_Data.TextureSlotIndex = 1; // Slot 0 have to be white!
 		s_Data.QuadIndexCount = 0;
 		s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+		s_Data.TextureSlotIndex = 1; // Slot 0 have to be white!
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
@@ -343,14 +410,6 @@ namespace Hazel
 		}
 	}
 
-	void Renderer::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
-	{
-		if (src.Texture)
-			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
-		else
-			DrawQuad(transform, src.Color, entityID);
-	}
-
 	void Renderer::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
 	{
 		DrawRotatedQuad({ position.x, position.y, 0.0f }, size, rotation, color);
@@ -493,6 +552,32 @@ namespace Hazel
 		}
 
 		s_Data.QuadIndexCount += 6;
+		s_Data.Stats.QuadCount++;
+	}
+
+	void Renderer::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+	{
+		if (src.Texture)
+			DrawQuad(transform, src.Texture, src.TilingFactor, src.Color, entityID);
+		else
+			DrawQuad(transform, src.Color, entityID);
+	}
+
+	void Renderer::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, int entityID)
+	{
+		constexpr size_t quadVertexCount = 4;
+		for (size_t i = 0; i < quadVertexCount; i++)
+		{
+			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
+			s_Data.CircleVertexBufferPtr->Thickness = thickness;
+			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
+			s_Data.CircleVertexBufferPtr->Color = color;
+			s_Data.CircleVertexBufferPtr->EntityID = entityID;
+			s_Data.CircleVertexBufferPtr++;
+		}
+
+		s_Data.CircleIndexCount += 6;
+
 		s_Data.Stats.QuadCount++;
 	}
 	

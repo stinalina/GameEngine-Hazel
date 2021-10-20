@@ -80,6 +80,23 @@ namespace Hazel
 		// Clear our entity ID attachment to -1
 		m_Framebuffer->ClearAttachment(1, -1);
 
+		//Testing the Particle System
+#if 0	if (false)//(Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
+		{
+			auto [x, y] = Hazel::Input::GetMousePosition();
+			auto width = Hazel::Application::Get().GetWindow().GetWidth();
+			auto height = Hazel::Application::Get().GetWindow().GetHeight();
+
+			auto bounds = m_CameraController.GetBounds();
+			auto pos = m_CameraController.GetCamera().GetPosition();
+			x = (x / width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
+			y = bounds.GetHeight() * 0.5f - (y / height) * bounds.GetHeight();
+			m_Particle.Position = { x + pos.x, y + pos.y };
+			for (int i = 0; i < 30; i++)
+				m_ParticleSystem.Emit(m_Particle);
+		}
+#endif
+
 		//Update
 		switch (m_SceneState)
 		{
