@@ -48,6 +48,10 @@ namespace Hazel
 		//Getter
 		const uint64_t GetID() { return m_ID; }
 		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
+		const uint32_t GetAmountOfDuplicates(){ return m_amountOfDuplicates; }
+
+		//Setters
+		void AddDuplicate() { m_amountOfDuplicates++; }
 
 		//Operators
 		operator bool() const { return m_EntityHandle != entt::null; }
@@ -62,5 +66,7 @@ namespace Hazel
 		uint64_t m_ID = 42; //use entt count for this 
 		entt::entity m_EntityHandle{ entt::null };
 		Scene* m_Scene = nullptr;
+
+		uint32_t m_amountOfDuplicates = 0;
 	};
 }

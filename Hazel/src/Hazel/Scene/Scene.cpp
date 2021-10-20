@@ -322,7 +322,10 @@ namespace Hazel
 
 	void Scene::DuplicateEntity(Entity entity)
 	{
-		Entity newEntity = CreateEntity(entity.GetName());
+		std::string name = entity.GetName() + "Duplicate_" 
+			+ std::to_string(entity.GetAmountOfDuplicates());
+		Entity newEntity = CreateEntity(name);
 		CopyAllExistingComponents(newEntity, entity);
+		entity.AddDuplicate();
 	}
 }
