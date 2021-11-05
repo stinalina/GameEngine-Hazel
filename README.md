@@ -1,2 +1,2 @@
 # Hazel
-GameEngine by TheCherno
+I've made this following an tutorial by TheCherno
