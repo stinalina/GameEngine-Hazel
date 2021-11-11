@@ -222,46 +222,30 @@ namespace Hazel
 				Renderer::BeginScene(mainCamera->GetProjection(), cameraTransform);
 
 				//Render Sprites
-				//auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-				//for (auto entity : spriteGroup)
-				//{
-				//	auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
-				//	Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				//}
-
-				auto spriteView = m_Registry.view<TransformComponent, SpriteRendererComponent>();
-				for (auto entity : spriteView)
+				auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				for (auto entity : spriteGroup)
 				{
-					auto [transform, sprite] = spriteView.get<TransformComponent, SpriteRendererComponent>(entity);
+					auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 					Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 
-				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-				for (auto entity : view)
+				//Render Circles
+				auto cirlceView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : cirlceView)
 				{
-					auto [transform, circleRenderer] = view.get<TransformComponent, CircleRendererComponent>(entity);
+					auto [transform, circleRenderer] = cirlceView.get<TransformComponent, CircleRendererComponent>(entity);
 
-					Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, (int)entity);
+					Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, circleRenderer.Blur, (int)entity);
 				}
 				
 				//Render Particles
-				//auto particleGroup = m_Registry.group<TransformComponent>(entt::get<ParticleSystemComponent>);
-				//for (auto entity : particleGroup)
-				//{
-				//	auto [transform, particles] = particleGroup.get<TransformComponent, ParticleSystemComponent>(entity);
-				//	particles.Particle.Position = glm::vec2(transform.Translation.x, transform.Translation.y);
-				//	particles.Instance.OnUpdate(ts);
-				//	particles.Instance.OnRender(*mainCamera);
-				//}
-				
-				//TODO:: This is not working. Can't find any ParticleSystemComponent!?
-
 				auto particleView = m_Registry.view<TransformComponent, ParticleSystemComponent>();
 				for (auto entity : particleView)
 				{
-					HZ_CORE_INFO("Found some particle to render!");
 					auto [transform, particles] = particleView.get<TransformComponent, ParticleSystemComponent>(entity);
 					particles.Particle.Position = glm::vec2(transform.Translation.x, transform.Translation.y);
+					if (particles.Show)
+						particles.Instance.Emit(particles.Particle);
 					particles.Instance.OnUpdate(ts);
 					particles.Instance.OnRender(*mainCamera);
 				}
@@ -275,21 +259,35 @@ namespace Hazel
 	{
 		Renderer::BeginScene(camera);
 
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		//Render Sprites
+		auto spriteGroup = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : spriteGroup)
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto [transform, sprite] = spriteGroup.get<TransformComponent, SpriteRendererComponent>(entity);
 
 			Renderer::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 		}
 
-		auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-		for (auto entity : view)
+		//Render Circles
+		auto cirlceView = m_Registry.view<TransformComponent, CircleRendererComponent>();
+		for (auto entity : cirlceView)
 		{
-			auto [transform, circleRenderer] = view.get<TransformComponent, CircleRendererComponent>(entity);
+			auto [transform, circleRenderer] = cirlceView.get<TransformComponent, CircleRendererComponent>(entity);
 
-			Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, (int)entity);
+			Renderer::DrawCircle(transform.GetTransform(), circleRenderer.Color, circleRenderer.Thickness, circleRenderer.Blur, (int)entity);
 		}
+
+		//Render Particles
+		//auto particleView = m_Registry.view<TransformComponent, ParticleSystemComponent>();
+		//for (auto entity : particleView)
+		//{
+		//	auto [transform, particles] = particleView.get<TransformComponent, ParticleSystemComponent>(entity);
+		//	particles.Particle.Position = glm::vec2(transform.Translation.x, transform.Translation.y);
+		//	if (particles.Show)
+		//		particles.Instance.Emit(particles.Particle);
+		//	particles.Instance.OnUpdate(ts);
+		//	particles.Instance.OnRender(camera);
+		//}
 
 		Renderer::EndScene();
 	}
@@ -326,6 +324,6 @@ namespace Hazel
 			+ std::to_string(entity.GetAmountOfDuplicates());
 		Entity newEntity = CreateEntity(name);
 		CopyAllExistingComponents(newEntity, entity);
-		entity.AddDuplicate();
+		entity.AddDuplicate(); //TODO:: This does nothing!
 	}
 }

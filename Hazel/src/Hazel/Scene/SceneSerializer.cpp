@@ -211,6 +211,7 @@ namespace Hazel
 			auto& circleRendererComponent = entity.GetComponent<CircleRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << circleRendererComponent.Color;
 			out << YAML::Key << "Thickness" << YAML::Value << circleRendererComponent.Thickness;
+			out << YAML::Key << "Blur" << YAML::Value << circleRendererComponent.Blur;
 
 			out << YAML::EndMap; // CircleRendererComponent
 		}
@@ -378,6 +379,7 @@ namespace Hazel
 					auto& src = deserializedEntity.AddComponent<CircleRendererComponent>();
 					src.Color = circleRendererComponent["Color"].as<glm::vec4>();
 					src.Thickness = circleRendererComponent["Thickness"].as<float>();
+					src.Blur = circleRendererComponent["Blur"].as<float>();
 				}
 
 				auto rigidbody2DComponent = entity["Rigidbody2DComponent"];

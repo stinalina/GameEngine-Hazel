@@ -60,8 +60,6 @@ namespace Hazel
 	//This is called/ have to be called inside a Render::BeginScene Scope; So we don't need an own Render::BeginScene
 	void ParticleSystem::OnRender(Camera& camera) 
 	{
-		HZ_CORE_INFO("Render Particles");
-		//Renderer::BeginScene(camera); 
 		for (auto& particle : m_ParticlePool)
 		{
 			if (!particle.Active)
@@ -76,7 +74,6 @@ namespace Hazel
 			glm::vec3 position = { particle.Position.x, particle.Position.y, 0.2f };
 			Renderer::DrawRotatedQuad(position, { size, size }, particle.Rotation, color);
 		}
-		//Renderer::EndScene();
 	}
 
 	void ParticleSystem::Emit(const ParticleProps& particleProps)

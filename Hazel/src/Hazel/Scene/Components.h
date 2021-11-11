@@ -57,6 +57,7 @@ namespace Hazel
 	{
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f; // 0->1 (1 = filled)
+		float Blur = 0.005f;
 
 		CircleRendererComponent() = default;
 		CircleRendererComponent(const CircleRendererComponent&) = default;
@@ -95,7 +96,7 @@ namespace Hazel
 	{
 		ParticleSystem Instance;
 		ParticleProps Particle;
-		bool Show = true;
+		bool Show = false;
 
 		ParticleSystemComponent() = default;
 		ParticleSystemComponent(const ParticleSystemComponent&) = default;

@@ -25,10 +25,11 @@ namespace Hazel
 
 	struct CircleVertex
 	{
-		glm::vec3 WorldPosition;
-		float Thickness;
+		glm::vec3 WorldPosition; //TODO come to agreement if using vec3 or vec2!
 		glm::vec2 LocalPosition;
 		glm::vec4 Color;
+		float Thickness;
+		float Blur;
 
 		// Editor-only
 		int EntityID;
@@ -44,7 +45,7 @@ namespace Hazel
 		//Quads
 		Ref<VertexArray> QuadVertexArray;
 		Ref<VertexBuffer> QuadVertexBuffer;
-		Ref<Shader> TextureShader;
+		Ref<Shader> QuadShader;
 		Ref<Texture2D> WhiteTexture;
 
 		uint32_t QuadIndexCount = 0;
@@ -122,9 +123,10 @@ namespace Hazel
 			s_Data.CircleVertexBuffer = VertexBuffer::Create(s_Data.MaxVertices * sizeof(CircleVertex));
 			s_Data.CircleVertexBuffer->SetLayout({
 				{ ShaderDataType::Float3, "a_WorldPosition" },
-				{ ShaderDataType::Float,  "a_Thickness"     },
 				{ ShaderDataType::Float2, "a_LocalPosition" },
 				{ ShaderDataType::Float4, "a_Color"         },
+				{ ShaderDataType::Float,  "a_Thickness"     },
+				{ ShaderDataType::Float,  "a_Fade"			},
 				{ ShaderDataType::Int,    "a_EntityID"      }
 				});
 			s_Data.CircleVertexArray->AddVertexBuffer(s_Data.CircleVertexBuffer);
@@ -141,7 +143,7 @@ namespace Hazel
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.TextureShader.reset(Shader::Create("assets/shaders/Texture.glsl"));
+		s_Data.QuadShader.reset(Shader::Create("assets/shaders/Texture.glsl")); //TODO rename to Quad.glsl
 		s_Data.CircleShader.reset(Shader::Create("assets/shaders/Circle.glsl"));
 
 		//s_Data.TextureShader->Bind();
@@ -173,8 +175,8 @@ namespace Hazel
 
 		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetMat4("u_ViewProjection", viewProj);
 
 		s_Data.CircleShader->Bind();
 		s_Data.CircleShader->SetMat4("u_ViewProjection", viewProj);
@@ -188,8 +190,8 @@ namespace Hazel
 
 		glm::mat4 viewProj = camera.GetViewProjection();
 
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetMat4("u_ViewProjection", viewProj);
+		s_Data.QuadShader->Bind();
+		s_Data.QuadShader->SetMat4("u_ViewProjection", viewProj);
 
 		s_Data.CircleShader->Bind();
 		s_Data.CircleShader->SetMat4("u_ViewProjection", viewProj);
@@ -217,7 +219,7 @@ namespace Hazel
 			for (int32_t i = 0; i < s_Data.TextureSlotIndex; i++)
 				s_Data.TextureSlots[i]->Bind(i);
 
-			s_Data.TextureShader->Bind();
+			s_Data.QuadShader->Bind();
 			RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 			s_Data.Stats.DrawCalls++;
 		}
@@ -563,15 +565,16 @@ namespace Hazel
 			DrawQuad(transform, src.Color, entityID);
 	}
 
-	void Renderer::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, int entityID)
+	void Renderer::DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness, float fade, int entityID)
 	{
 		constexpr size_t quadVertexCount = 4;
 		for (size_t i = 0; i < quadVertexCount; i++)
 		{
 			s_Data.CircleVertexBufferPtr->WorldPosition = transform * s_Data.QuadVertexPositions[i];
-			s_Data.CircleVertexBufferPtr->Thickness = thickness;
 			s_Data.CircleVertexBufferPtr->LocalPosition = s_Data.QuadVertexPositions[i] * 2.0f;
 			s_Data.CircleVertexBufferPtr->Color = color;
+			s_Data.CircleVertexBufferPtr->Thickness = thickness;
+			s_Data.CircleVertexBufferPtr->Blur = fade;
 			s_Data.CircleVertexBufferPtr->EntityID = entityID;
 			s_Data.CircleVertexBufferPtr++;
 		}
