@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Circle.glsl" />
+    <None Include="assets\shaders\Line.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
