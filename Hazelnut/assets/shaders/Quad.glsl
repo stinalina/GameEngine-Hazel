@@ -1,3 +1,10 @@
+//////////////
+// Hazel 2D //
+//////////////
+//
+// Renderer 2D Quad Shader
+//
+
 #type vertex
 #version 330 core
 

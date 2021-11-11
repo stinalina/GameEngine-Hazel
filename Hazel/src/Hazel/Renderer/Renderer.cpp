@@ -143,7 +143,7 @@ namespace Hazel
 		for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
 			samplers[i] = i;
 
-		s_Data.QuadShader.reset(Shader::Create("assets/shaders/Texture.glsl")); //TODO rename to Quad.glsl
+		s_Data.QuadShader.reset(Shader::Create("assets/shaders/Quad.glsl")); 
 		s_Data.CircleShader.reset(Shader::Create("assets/shaders/Circle.glsl"));
 
 		//s_Data.TextureShader->Bind();
