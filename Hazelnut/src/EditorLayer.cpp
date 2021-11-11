@@ -458,16 +458,16 @@ namespace Hazel
 			break;
 
 		//Gizmos
-		case Key::Q: 
+		case Key::D1: //1
 			if(!ImGuizmo::IsUsing()) m_GizmoType = -1;
 			break;
-		case Key::W:
+		case Key::D2: //2
 			if (!ImGuizmo::IsUsing()) m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 			break;
-		case Key::E:
+		case Key::D3: //3
 			if (!ImGuizmo::IsUsing()) m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 			break;
-		case Key::R:
+		case Key::D4: //4
 			if (!ImGuizmo::IsUsing()) m_GizmoType = ImGuizmo::OPERATION::SCALE;
 			break;
 		}
@@ -523,7 +523,9 @@ namespace Hazel
 	void EditorLayer::SaveScene()
 	{
 		SceneSerializer serializer(m_ActiveScene);
-		serializer.Serialize(*m_ActiveScene->GetFilepath());
+		auto path = *m_ActiveScene->GetFilepath();
+		if (path == "") SaveSceneAs();
+		else serializer.Serialize(path);
 		HZ_CORE_INFO("Save Scene {0}", *m_ActiveScene->GetFilepath());
 	}
 
