@@ -56,73 +56,77 @@ namespace Hazel
 			if (ImGui::BeginPopupContextWindow(0, 1, false))
 			{
 				ImGui::Text("Add Component:");
-				if (!m_SelectionContext.HasComponent<CameraComponent>())
-				{
-					if (ImGui::MenuItem("Camera"))
-					{
-						m_SelectionContext.AddComponent<CameraComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-				{
-					if (ImGui::MenuItem("Sprite Renderer"))
-					{
-						m_SelectionContext.AddComponent<SpriteRendererComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
-				{
-					if (ImGui::MenuItem("Circle Renderer"))
-					{
-						m_SelectionContext.AddComponent<CircleRendererComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<ParticleSystemComponent>())
-				{
-					if (ImGui::MenuItem("Particle System"))
-					{
-						m_SelectionContext.AddComponent<ParticleSystemComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
-				{
-					if (ImGui::MenuItem("Rigidbody 2D"))
-					{
-						m_SelectionContext.AddComponent<Rigidbody2DComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
-				{
-					if (ImGui::MenuItem("Box Collider 2D"))
-					{
-						m_SelectionContext.AddComponent<BoxCollider2DComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
-				if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
-				{
-					if (ImGui::MenuItem("Circle Collider 2D"))
-					{
-						m_SelectionContext.AddComponent<CircleCollider2DComponent>();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-
+				CreateAddComponentContextMenu(m_SelectionContext);
 				ImGui::EndPopup();
 			}
 		}
 		ImGui::End();
+	}
+
+	void SceneHierarchyPanel::CreateAddComponentContextMenu(Hazel::Entity selectionContext) //ToDo How to use?!
+	{
+		if (!selectionContext.HasComponent<CameraComponent>())
+		{
+			if (ImGui::MenuItem("Camera"))
+			{
+				selectionContext.AddComponent<CameraComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<SpriteRendererComponent>())
+		{
+			if (ImGui::MenuItem("Sprite Renderer"))
+			{
+				selectionContext.AddComponent<SpriteRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<CircleRendererComponent>())
+		{
+			if (ImGui::MenuItem("Circle Renderer"))
+			{
+				selectionContext.AddComponent<CircleRendererComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<ParticleSystemComponent>())
+		{
+			if (ImGui::MenuItem("Particle System"))
+			{
+				selectionContext.AddComponent<ParticleSystemComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<Rigidbody2DComponent>())
+		{
+			if (ImGui::MenuItem("Rigidbody 2D"))
+			{
+				selectionContext.AddComponent<Rigidbody2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<BoxCollider2DComponent>())
+		{
+			if (ImGui::MenuItem("Box Collider 2D"))
+			{
+				selectionContext.AddComponent<BoxCollider2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!selectionContext.HasComponent<CircleCollider2DComponent>())
+		{
+			if (ImGui::MenuItem("Circle Collider 2D"))
+			{
+				selectionContext.AddComponent<CircleCollider2DComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
 	}
 
 	void SceneHierarchyPanel::SetSelectedEntity(Entity entity)
@@ -342,6 +346,20 @@ namespace Hazel
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("ID = %i", entity.GetID());
 		}
+
+		ImGui::SameLine();
+		ImGui::PushItemWidth(-1);
+
+			if (ImGui::Button("Add Component"))
+				ImGui::OpenPopup("AddComponent");
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				CreateAddComponentContextMenu(m_SelectionContext);
+				ImGui::EndPopup();
+			}
+
+		ImGui::PopItemWidth();
 
 		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
 			{
