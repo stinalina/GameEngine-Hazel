@@ -1,26 +1,87 @@
 Scene: Physics2D.hazel
 Entities:
-  - Entity: 5
+  - Entity: 6
     TagComponent:
-      Tag: Cube
+      Tag: FloorDuplicate_0
     TransformComponent:
-      Translation: [-0.310869366, 1.65051305, 0]
-      Rotation: [0, 0, -1.98516619]
-      Scale: [0.442928135, 0.502500117, 0.38776055]
+      Translation: [3.09958768, -2.72400689, 0]
+      Rotation: [0, 0, 0.194282979]
+      Scale: [6.66021824, 0.320914209, 1]
     SpriteRendererComponent:
-      Color: [0.288927436, 0.524791479, 0.665480435, 1]
+      Color: [1, 1, 1, 1]
       TilingFactor: 1
     Rigidbody2DComponent:
-      BodyType: Dynamic
+      BodyType: Static
       FixedRotation: false
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.629999995
+      Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
+  - Entity: 5
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Translation: [-2.62195516, 2.80342102, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [0.708185077, 0.141132966, 0.141132966, 1]
+      Thickness: 0.280000001
+      Blur: 0.356999993
   - Entity: 4
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Translation: [2.4267025, 2.12003756, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CircleRendererComponent:
+      Color: [0.708185077, 0.141132966, 0.141132966, 1]
+      Thickness: 0.0399999991
+      Blur: 0.00499999989
+  - Entity: 3
+    TagComponent:
+      Tag: Circle
+    TransformComponent:
+      Translation: [2.52504706, -1.65646338, 0]
+      Rotation: [0, 0, 0]
+      Scale: [2.04999995, 1.94910538, 2.04999995]
+    CircleRendererComponent:
+      Color: [0.708185077, 0.141132966, 0.141132966, 1]
+      Thickness: 0.280000001
+      Blur: 0.00499999989
+    Rigidbody2DComponent:
+      BodyType: Static
+      FixedRotation: false
+    CircleCollider2DComponent:
+      Offset: [0, 0]
+      Radius: 0.5
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      RestitutionThreshold: 0.5
+  - Entity: 2
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 0.785398185
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+      FixedAspectRatio: false
+  - Entity: 1
     TagComponent:
       Tag: Floor
     TransformComponent:
@@ -40,54 +101,23 @@ Entities:
       Friction: 0.5
       Restitution: 0
       RestitutionThreshold: 0.5
-  - Entity: 3
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      Camera:
-        ProjectionType: 1
-        PerspectiveFOV: 0.785398185
-        PerspectiveNear: 0.00999999978
-        PerspectiveFar: 1000
-        OrthographicSize: 10
-        OrthographicNear: -1
-        OrthographicFar: 1
-      Primary: true
-      FixedAspectRatio: false
-  - Entity: 2
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Translation: [2.59406114, -0.362457156, 0]
-      Rotation: [0, 0, 0]
-      Scale: [2.04999995, 1.94910538, 2.04999995]
-    CircleRendererComponent:
-      Color: [0.708185077, 0.141132966, 0.141132966, 1]
-      Thickness: 0.280000001
-      Blur: 0.00499999989
-  - Entity: 1
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Translation: [2.4267025, 2.12003756, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [0.708185077, 0.141132966, 0.141132966, 1]
-      Thickness: 0.0399999991
-      Blur: 0.00499999989
   - Entity: 0
     TagComponent:
-      Tag: Circle
+      Tag: Cube
     TransformComponent:
-      Translation: [-2.62195516, 2.80342102, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    CircleRendererComponent:
-      Color: [0.708185077, 0.141132966, 0.141132966, 1]
-      Thickness: 0.280000001
-      Blur: 0.356999993
+      Translation: [-0.310869366, 1.65051305, 0]
+      Rotation: [0, 0, -1.98516619]
+      Scale: [0.442928135, 0.502500117, 0.38776055]
+    SpriteRendererComponent:
+      Color: [0.288927436, 0.524791479, 0.665480435, 1]
+      TilingFactor: 1
+    Rigidbody2DComponent:
+      BodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.629999995
+      Restitution: 0
+      RestitutionThreshold: 0.5

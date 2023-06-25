@@ -14,6 +14,7 @@
 #include "box2d/b2_body.h"
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
 
 namespace Hazel
 {
@@ -68,7 +69,8 @@ namespace Hazel
 		CopyComponentIfExists<Component...>(dst, src);
 	}
 
-	static void CopyAllComponents(entt::registry& dstSceneRegistry, entt::registry& srcSceneRegistry, const std::unordered_map<uint64_t, entt::entity>& enttMap)
+	static void CopyAllComponents(entt::registry& dstSceneRegistry, entt::registry& srcSceneRegistry, 
+		const std::unordered_map<uint64_t, entt::entity>& enttMap)
 	{
 		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
 	}
@@ -138,6 +140,7 @@ namespace Hazel
 			body->SetFixedRotation(rb2d.FixedRotation);
 			rb2d.RuntimeBody = body;
 
+			//Add BoxColliderComponent
 			if (entity.HasComponent<BoxCollider2DComponent>())
 			{
 				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
@@ -148,9 +151,25 @@ namespace Hazel
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &boxShape;
 				fixtureDef.density = bc2d.Density;
-				fixtureDef.friction = bc2d.Friction;
 				fixtureDef.restitution = bc2d.Restitution;
 				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+			//Add CircleColliderComponent
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
+				circleShape.m_radius = cc2d.Radius;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = cc2d.Density;
+				fixtureDef.friction = cc2d.Friction;
+				fixtureDef.restitution = cc2d.Restitution;
+				fixtureDef.restitutionThreshold = cc2d.RestitutionThreshold;
 				body->CreateFixture(&fixtureDef);
 			}
 		}
